@@ -1,0 +1,37 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: fetch
+  image: alpine/git
+  commands:
+  - git fetch --tags
+
+- name: testing
+  image: golang:latest
+  commands:
+  - make test
+
+# - name: lint
+#   image: golangci/golangci-lint
+#   commands:
+#   - golangci-lint run -v
+
+- name: release
+  image: golang:latest
+  when:
+    branch:
+    - master
+    event:
+    - tag
+  environment:
+    GITHUB_TOKEN:
+      from_secret: GITHUB_TOKEN
+  commands:
+  - curl -sL https://git.io/goreleaser | bash
+
+trigger:
+  branch:
+    exclude:
+    - github-pages
