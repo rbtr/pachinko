@@ -25,8 +25,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// var tvdbAPIKey string = "1ffca36f894fd585649d26b1fdc48d8c"
-
 // WordMatcher regex
 var matcher *regexp.Regexp = regexp.MustCompile(`[^\w]`)
 

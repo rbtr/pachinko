@@ -20,7 +20,7 @@ written in go by @rbtr
 
 
 ### what it is
-pachinko is a media sorter. it integrates with the tvdb and the moviedb to, given a directory of reasonably named mix media, organize that media into a clean hierarchal directory directory structure ideal for use in media servers like plex, kodi/xbmc, etc.
+pachinko is a media sorter. it integrates with the tvdb and the moviedb to, given a directory of reasonably named mix media, organize that media into a clean hierarchal directory structure ideal for use in media servers like plex, kodi/xbmc, etc.
 
 unlike some of the prior implementations of this idea, pachinko was designed from inception to be automation and container-friendly.  
 it has no heavy gui - configure it through the config file or via flags, then execute it and walk away.

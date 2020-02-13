@@ -126,10 +126,9 @@ func (p *Pipeline) WithOutputs(outputs ...output.Output) {
 func (p *Pipeline) Run(ctx context.Context) error {
 	log.Debug("running pipeline")
 
+	var wg sync.WaitGroup
 	in := make(chan types.Media, p.Buffer)
 	out := make(chan types.Media, p.Buffer)
-
-	var wg sync.WaitGroup
 
 	wg.Add(1)
 	go func(ctx context.Context, sink chan types.Media) {
