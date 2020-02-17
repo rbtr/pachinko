@@ -90,16 +90,18 @@ func (p *Pipeline) runOutputs(ctx context.Context, source chan types.Media) erro
 
 	wg.Add(1)
 	go func(_ context.Context, in <-chan types.Media, outs []chan<- types.Media) {
+		var wgOut sync.WaitGroup
 		defer wg.Done()
 		for m := range source {
 			for _, out := range outs {
-				wg.Add(1)
+				wgOut.Add(1)
 				go func(_ context.Context, i types.Media, o chan<- types.Media) {
-					defer wg.Done()
+					defer wgOut.Done()
 					o <- i
 				}(ctx, m, out)
 			}
 		}
+		wgOut.Wait()
 		for _, o := range outs {
 			close(o)
 		}
