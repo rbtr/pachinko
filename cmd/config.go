@@ -58,8 +58,7 @@ and the pachinko pipeline.
 		if err := cfg.Validate(); err != nil {
 			log.Fatal(err)
 		}
-		pipelineCfg := &config.SortCmdConfig{RootConfig: cfg.RootConfig}
-
+		pipelineCfg := config.NewSortCmdConfig()
 		if err := cfg.DefaultConfig(pipelineCfg); err != nil {
 			log.Fatal(err)
 		}

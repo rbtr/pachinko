@@ -11,10 +11,10 @@ import (
 	"context"
 	"sync"
 
-	"github.com/rbtr/pachinko/internal/types"
 	"github.com/rbtr/pachinko/plugin/input"
 	"github.com/rbtr/pachinko/plugin/output"
 	"github.com/rbtr/pachinko/plugin/processor"
+	"github.com/rbtr/pachinko/types"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -51,7 +51,8 @@ func (p *Pipeline) runInputs(ctx context.Context, sink chan<- types.Media) error
 }
 
 func (p *Pipeline) runProcessors(ctx context.Context, source, sink chan types.Media) error {
-	// this noop processor attaches the final internal input stream to the external sink
+	// this noop post-processor attaches the final internal input stream to the
+	// external sink
 	p.processors = processor.AppendFunc(p.processors, func(in <-chan types.Media, _ chan<- types.Media) {
 		for m := range in {
 			sink <- m
@@ -89,10 +90,10 @@ func (p *Pipeline) runOutputs(ctx context.Context, source chan types.Media) erro
 	}
 
 	wg.Add(1)
-	go func(_ context.Context, in <-chan types.Media, outs []chan<- types.Media) {
+	go func(ctx context.Context, in <-chan types.Media, outs []chan<- types.Media) {
 		var wgOut sync.WaitGroup
 		defer wg.Done()
-		for m := range source {
+		for m := range in {
 			for _, out := range outs {
 				wgOut.Add(1)
 				go func(_ context.Context, i types.Media, o chan<- types.Media) {
