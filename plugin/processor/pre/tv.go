@@ -18,7 +18,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var defaultMatchers = []string{
+var defaultTVMatchers = []string{
 	`(?i)\b([\s\w.-]*)[\s.\/-]+(?:\((\d+)\))?[\s.\/-]?(\d{1,3})[x-](\d{1,3})`,                             // matches 1x1 and 1/1 patterns
 	`(?i)\b([\s\w.-]*?)?(?:[\s\(.\/-](\d{4})[\s\).\/-])?[\s\w.-]?(?:s+(\d+))(?:\.|\s|-|_|x)*(?:e+(\d+))`,  // matches S00E00 patterns
 	`(?i)\b([\s\w.-]*)[\s.\/-]+(?:\((\d+)\))?[\s.\/-]?(?:season|series).?(\d+).?(?:episode)?[^\d(]?(\d+)`, // matches Season 00 patterns
@@ -113,7 +113,7 @@ func (p *TVPreProcessor) Process(in <-chan types.Media, out chan<- types.Media) 
 func init() {
 	processor.Register(processor.Pre, "tv", func() processor.Processor {
 		return &TVPreProcessor{
-			MatcherStrings: defaultMatchers,
+			MatcherStrings: defaultTVMatchers,
 			Sanitize:       true,
 		}
 	})

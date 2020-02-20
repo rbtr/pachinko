@@ -101,6 +101,20 @@ var Movies []*Test = []*Test{
 			},
 		},
 	},
+	{
+		"typical",
+		[]string{
+			"/src/Finding Nemo (2003).mkv",
+		},
+		types.Media{
+			Category: types.Video,
+			Type:     movie.Movie,
+			MovieMetadata: movie.Metadata{
+				Title:       "Finding Nemo",
+				ReleaseYear: 2003,
+			},
+		},
+	},
 }
 
 var NotTV []*Test = []*Test{}

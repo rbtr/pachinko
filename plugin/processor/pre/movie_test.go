@@ -12,13 +12,13 @@ import (
 
 	internaltesting "github.com/rbtr/pachinko/internal/testing"
 	"github.com/rbtr/pachinko/types"
-	"github.com/rbtr/pachinko/types/metadata/tv"
+	"github.com/rbtr/pachinko/types/metadata/movie"
 )
 
-func TestTVPreProcessor_extractMetadata(t *testing.T) {
-	tv := &TVPreProcessor{MatcherStrings: defaultTVMatchers, Sanitize: true}
+func TestMoviePreProcessor_extractMetadata(t *testing.T) {
+	tv := &MoviePreProcessor{MatcherStrings: defaultMovieMatchers, Sanitize: true}
 	tv.Init()
-	for _, tt := range internaltesting.TV {
+	for _, tt := range internaltesting.Movies {
 		tt := tt
 		for _, in := range tt.Inputs {
 			in := in
@@ -43,10 +43,10 @@ func TestTVPreProcessor_extractMetadata(t *testing.T) {
 	}
 }
 
-func TestTVPreProcessor_identify(t *testing.T) {
-	p := &TVPreProcessor{MatcherStrings: defaultTVMatchers, Sanitize: true}
+func TestMoviePreProcessor_identify(t *testing.T) {
+	p := &MoviePreProcessor{MatcherStrings: defaultMovieMatchers, Sanitize: true}
 	_ = p.Init()
-	for _, tt := range internaltesting.TV {
+	for _, tt := range internaltesting.Movies {
 		tt := tt
 		for _, in := range tt.Inputs {
 			in := in
@@ -54,13 +54,13 @@ func TestTVPreProcessor_identify(t *testing.T) {
 				t.Parallel()
 				min := types.Media{SourcePath: in}
 				mout := p.identify(min)
-				if mout == (tv.TV != tt.Want.Type) {
+				if mout == (movie.Movie != tt.Want.Type) {
 					t.Errorf("got %t, want %s", mout, tt.Want.Type)
 				}
 			})
 		}
 	}
-	for _, tt := range internaltesting.NotTV {
+	for _, tt := range internaltesting.NotMovies {
 		tt := tt
 		for _, in := range tt.Inputs {
 			in := in
@@ -68,7 +68,7 @@ func TestTVPreProcessor_identify(t *testing.T) {
 				t.Parallel()
 				min := types.Media{SourcePath: in}
 				mout := p.identify(min)
-				if mout == (tv.TV != tt.Want.Type) {
+				if mout == (movie.Movie != tt.Want.Type) {
 					t.Errorf("got %t but shouldn't have", mout)
 				}
 			})
