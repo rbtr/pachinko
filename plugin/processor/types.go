@@ -22,17 +22,17 @@ type Processor interface {
 	Process(<-chan types.Media, chan<- types.Media)
 }
 
-type ProcessorFunc func(<-chan types.Media, chan<- types.Media)
+type Func func(<-chan types.Media, chan<- types.Media)
 
-func (ProcessorFunc) Init() error {
+func (Func) Init() error {
 	return nil
 }
 
-func (pf ProcessorFunc) Process(in <-chan types.Media, out chan<- types.Media) {
+func (pf Func) Process(in <-chan types.Media, out chan<- types.Media) {
 	pf(in, out)
 }
 
-func AppendFunc(ps []Processor, fs ...ProcessorFunc) []Processor {
+func AppendFunc(ps []Processor, fs ...Func) []Processor {
 	pfs := make([]Processor, len(fs))
 	for i := range fs {
 		pfs[i] = fs[i]
@@ -41,9 +41,9 @@ func AppendFunc(ps []Processor, fs ...ProcessorFunc) []Processor {
 }
 
 var Registry map[Type]map[string](func() Processor) = map[Type]map[string](func() Processor){
-	Pre:   map[string](func() Processor){},
-	Intra: map[string](func() Processor){},
-	Post:  map[string](func() Processor){},
+	Pre:   {},
+	Intra: {},
+	Post:  {},
 }
 
 func Register(t Type, name string, initializer func() Processor) {

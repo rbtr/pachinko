@@ -29,7 +29,7 @@ not do anything useful.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.SetLevel(log.TraceLevel)
-		cfg, err := config.LoadSortCmdConfig()
+		cfg, err := config.LoadCmdSort()
 		if err != nil {
 			log.Fatal(err)
 		}

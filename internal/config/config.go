@@ -26,7 +26,7 @@ type RootConfig struct {
 	LogFormat string `mapstructure:"log-format"`
 }
 
-type ConfigCmdConfig struct {
+type CmdConfig struct {
 	RootConfig `mapstructure:",squash"`
 	Format     string                      `mapstructure:"format"`
 	Inputs     []string                    `mapstructure:"inputs"`
@@ -34,7 +34,7 @@ type ConfigCmdConfig struct {
 	Processors map[processor.Type][]string `mapstructure:"processors"`
 }
 
-type SortCmdConfig struct {
+type CmdSort struct {
 	RootConfig `mapstructure:",squash"`
 	Pipeline   pipeline.Config                             `mapstructure:"pipeline"`
 	Inputs     []map[string]interface{}                    `mapstructure:"inputs"`
@@ -69,7 +69,7 @@ func (c *RootConfig) Validate() error {
 	return nil
 }
 
-func (c *SortCmdConfig) ConfigurePipeline(pipe *pipeline.Pipeline) error {
+func (c *CmdSort) ConfigurePipeline(pipe *pipeline.Pipeline) error {
 	if err := mapstructure.Decode(c.Pipeline, pipe); err != nil {
 		return err
 	}
@@ -129,8 +129,8 @@ func (c *SortCmdConfig) ConfigurePipeline(pipe *pipeline.Pipeline) error {
 	return nil
 }
 
-func NewSortCmdConfig() *SortCmdConfig {
-	return &SortCmdConfig{
+func NewCmdSort() *CmdSort {
+	return &CmdSort{
 		Processors: map[processor.Type][]map[string]interface{}{
 			processor.Pre:   {},
 			processor.Intra: {},
@@ -140,15 +140,15 @@ func NewSortCmdConfig() *SortCmdConfig {
 }
 
 // LoadConfig loadconfig
-func LoadSortCmdConfig() (*SortCmdConfig, error) {
-	cfg := NewSortCmdConfig()
+func LoadCmdSort() (*CmdSort, error) {
+	cfg := NewCmdSort()
 	viper.SetEnvKeyReplacer(strings.NewReplacer("_", "-"))
 	viper.AutomaticEnv()
 	err := viper.Unmarshal(cfg)
 	return cfg, err
 }
 
-func (c *ConfigCmdConfig) DefaultConfig(p *SortCmdConfig) error {
+func (c *CmdConfig) DefaultConfig(p *CmdSort) error {
 	if len(c.Inputs) == 0 && len(c.Outputs) == 0 && len(c.Processors) == 0 {
 		// no plugins specified, dump configs for them all
 		for k := range input.Registry {
@@ -205,8 +205,8 @@ func (c *ConfigCmdConfig) DefaultConfig(p *SortCmdConfig) error {
 	return nil
 }
 
-func LoadConfigCmdConfig() (*ConfigCmdConfig, error) {
-	cfg := &ConfigCmdConfig{}
+func LoadCmdConfig() (*CmdConfig, error) {
+	cfg := &CmdConfig{}
 	viper.SetEnvKeyReplacer(strings.NewReplacer("_", "-"))
 	viper.AutomaticEnv()
 	err := viper.Unmarshal(cfg)

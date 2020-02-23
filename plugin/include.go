@@ -8,6 +8,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 package plugin
 
 import (
+	// blank includes
 	_ "github.com/rbtr/pachinko/plugin/input"
 	_ "github.com/rbtr/pachinko/plugin/output"
 	_ "github.com/rbtr/pachinko/plugin/processor/intra"

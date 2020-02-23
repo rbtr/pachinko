@@ -51,14 +51,14 @@ and the pachinko pipeline.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.SetLevel(log.TraceLevel)
-		cfg, err := config.LoadConfigCmdConfig()
+		cfg, err := config.LoadCmdConfig()
 		if err != nil {
 			log.Fatal(err)
 		}
 		if err := cfg.Validate(); err != nil {
 			log.Fatal(err)
 		}
-		pipelineCfg := config.NewSortCmdConfig()
+		pipelineCfg := config.NewCmdSort()
 		if err := cfg.DefaultConfig(pipelineCfg); err != nil {
 			log.Fatal(err)
 		}

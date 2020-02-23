@@ -36,7 +36,7 @@ func NewPipeline() *Pipeline {
 	}
 }
 
-func (p *Pipeline) runInputs(ctx context.Context, sink chan<- types.Media) error {
+func (p *Pipeline) runInputs(ctx context.Context, sink chan<- types.Media) {
 	var wg sync.WaitGroup
 	for _, input := range p.inputs {
 		wg.Add(1)
@@ -47,10 +47,9 @@ func (p *Pipeline) runInputs(ctx context.Context, sink chan<- types.Media) error
 	}
 	wg.Wait()
 	log.Debug("pipeline: inputs finished")
-	return nil
 }
 
-func (p *Pipeline) runProcessors(ctx context.Context, source, sink chan types.Media) error {
+func (p *Pipeline) runProcessors(ctx context.Context, source, sink chan types.Media) {
 	// this noop post-processor attaches the final internal input stream to the
 	// external sink
 	p.processors = processor.AppendFunc(p.processors, func(in <-chan types.Media, _ chan<- types.Media) {
@@ -73,10 +72,9 @@ func (p *Pipeline) runProcessors(ctx context.Context, source, sink chan types.Me
 	}
 	wg.Wait()
 	log.Debug("pipeline: processors finished")
-	return nil
 }
 
-func (p *Pipeline) runOutputs(ctx context.Context, source chan types.Media) error {
+func (p *Pipeline) runOutputs(ctx context.Context, source chan types.Media) {
 	sinks := []chan<- types.Media{}
 	var wg sync.WaitGroup
 	for _, output := range p.outputs {
@@ -109,7 +107,6 @@ func (p *Pipeline) runOutputs(ctx context.Context, source chan types.Media) erro
 	}(ctx, source, sinks)
 	wg.Wait()
 	log.Debug("pipeline: outputs finished")
-	return nil
 }
 
 func (p *Pipeline) WithInputs(inputs ...input.Input) {
@@ -135,9 +132,7 @@ func (p *Pipeline) Run(ctx context.Context) error {
 	go func(ctx context.Context, sink chan types.Media) {
 		log.Trace("pipeline: executing input thread")
 		defer wg.Done()
-		if err := p.runInputs(ctx, sink); err != nil {
-			log.Errorf("pipeline: input error: %s", err)
-		}
+		p.runInputs(ctx, sink)
 		log.Trace("pipeline: closing input chan")
 		close(sink)
 	}(ctx, in)
@@ -146,9 +141,7 @@ func (p *Pipeline) Run(ctx context.Context) error {
 	go func(ctx context.Context, source, sink chan types.Media) {
 		log.Trace("pipeline: executing processor thread")
 		defer wg.Done()
-		if err := p.runProcessors(ctx, source, sink); err != nil {
-			log.Errorf("pipeline: processor error: %s", err)
-		}
+		p.runProcessors(ctx, source, sink)
 		log.Trace("pipeline: closing processor chan")
 		close(sink)
 	}(ctx, in, out)
@@ -157,9 +150,7 @@ func (p *Pipeline) Run(ctx context.Context) error {
 	go func(ctx context.Context, source chan types.Media) {
 		log.Trace("pipeline: executing output thread")
 		defer wg.Done()
-		if err := p.runOutputs(ctx, source); err != nil {
-			log.Errorf("pipeline: output error: %s", err)
-		}
+		p.runOutputs(ctx, source)
 	}(ctx, out)
 
 	log.Debug("pipeline: waiting for threads to finish")

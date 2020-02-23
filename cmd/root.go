@@ -15,10 +15,12 @@ import (
 	"syscall"
 
 	homedir "github.com/mitchellh/go-homedir"
-	_ "github.com/rbtr/pachinko/plugin"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	// include plugins
+	_ "github.com/rbtr/pachinko/plugin"
 )
 
 var cfgFile string
