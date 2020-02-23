@@ -103,7 +103,11 @@ func (c *SortCmdConfig) ConfigurePipeline(pipe *pipeline.Pipeline) error {
 		}
 	}
 
-	pipe.WithProcessors(internalpre.NewCategorizer())
+	categorizer := internalpre.NewCategorizer()
+	if err := categorizer.Init(); err != nil {
+		return err
+	}
+	pipe.WithProcessors(categorizer)
 
 	for _, t := range processor.Types {
 		for _, p := range c.Processors[t] {

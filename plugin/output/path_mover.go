@@ -46,13 +46,13 @@ func (mv *FilepathMover) move(src, dest string) error {
 
 func (mv *FilepathMover) moveMedia(m types.Media) error {
 	if m.DestinationPath == "" {
-		return errors.New("no dest path")
+		return errors.New("move_output: no dest path")
 	}
 	dir, _ := filepath.Split(m.DestinationPath)
 	// check for dest directory, create if doesn't exist and allowed
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		if !mv.CreateDirs {
-			return errors.Errorf("dest (%s) does not exist and will not be created", dir)
+			return errors.Errorf("move_output: dest (%s) does not exist and will not be created", dir)
 		}
 		if err := mv.mkdir(dir); err != nil {
 			return err
@@ -61,7 +61,7 @@ func (mv *FilepathMover) moveMedia(m types.Media) error {
 	// check for dest file
 	if _, err := os.Stat(m.DestinationPath); !os.IsNotExist(err) {
 		if !mv.Overwrite {
-			return errors.Errorf("file (%s) already exists and will not be overwritten", m.DestinationPath)
+			return errors.Errorf("move_output: file (%s) already exists and will not be overwritten", m.DestinationPath)
 		}
 	}
 	// move src to dest
@@ -72,11 +72,11 @@ func (mv *FilepathMover) moveMedia(m types.Media) error {
 func (mv *FilepathMover) Receive(c <-chan types.Media) {
 	log.Trace("started mover output")
 	for m := range c {
-		log.Tracef("mover_output: received_input %v", m)
+		log.Tracef("mover_output: received_input %#v", m)
 		if err := mv.moveMedia(m); err != nil {
 			log.Errorf("mover_output: %s", err)
 		} else {
-			log.Infof("moved %s -> %s", m.SourcePath, m.DestinationPath)
+			log.Infof("move_output: moved %s -> %s", m.SourcePath, m.DestinationPath)
 		}
 	}
 }

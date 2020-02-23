@@ -115,6 +115,20 @@ var Movies []*Test = []*Test{
 			},
 		},
 	},
+	{
+		"metadata",
+		[]string{
+			"/src/Frozen 2 (2019)  [1080p x265 10bit FS93].mkv",
+		},
+		types.Media{
+			Category: types.Video,
+			Type:     movie.Movie,
+			MovieMetadata: movie.Metadata{
+				Title:       "Frozen 2",
+				ReleaseYear: 2019,
+			},
+		},
+	},
 }
 
 var NotTV []*Test = []*Test{}

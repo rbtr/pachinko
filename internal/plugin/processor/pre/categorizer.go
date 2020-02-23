@@ -18,6 +18,14 @@ import (
 )
 
 var defaultCategoryFileExtensions = map[types.Category][]string{
+	types.Archive: {
+		"7z",
+		"gz",
+		"gzip",
+		"rar",
+		"tar",
+		"zip",
+	},
 	types.Image: {
 		"bmp",
 		"gif",
@@ -35,6 +43,7 @@ var defaultCategoryFileExtensions = map[types.Category][]string{
 		"info",
 		"nfo",
 		"txt",
+		"website",
 	},
 	types.Video: {
 		"avi",
@@ -54,6 +63,7 @@ type FileCategorizer struct {
 
 func (cat *FileCategorizer) Init() error {
 	log.Trace("categorizer initializing")
+	cat.fileExtensionCategories = map[string]types.Category{}
 	// transpose the category/extension map for immediate lookups
 	for k, v := range cat.CategoryFileExtensions {
 		for _, vv := range v {
@@ -76,6 +86,7 @@ func (cat *FileCategorizer) identify(m types.Media) types.Media {
 	}
 
 	trimmed := strings.Trim(ext, ".")
+	log.Tracef("categorizer: lookup extension '%s'", trimmed)
 	if c, ok := cat.fileExtensionCategories[trimmed]; ok {
 		log.Debugf("categorizer: identified %s as %s", ext, c)
 		category = c
@@ -87,7 +98,7 @@ func (cat *FileCategorizer) identify(m types.Media) types.Media {
 func (cat *FileCategorizer) Process(in <-chan types.Media, out chan<- types.Media) {
 	log.Trace("started categorizer")
 	for m := range in {
-		log.Tracef("categorizer: received input: %v", m)
+		log.Debugf("categorizer: received input: %v", m)
 		out <- cat.identify(m)
 	}
 }

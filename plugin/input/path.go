@@ -42,9 +42,9 @@ func (p *FilePathInput) Consume(sink chan<- types.Media) {
 			log.Tracef("path_input: skipping %s, not a leaf node", path)
 			return nil
 		}
-		log.Debugf("path_input: found file: %s", path)
+		log.Infof("path_input: found file: %s", path)
 		sink <- types.Media{SourcePath: path}
-		count = count + 1
+		count++
 		return nil
 	}); err != nil {
 		log.Errorf("path_input: %s", err)

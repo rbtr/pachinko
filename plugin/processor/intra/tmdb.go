@@ -8,6 +8,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 package intra
 
 import (
+	"strconv"
 	"time"
 
 	api "github.com/cyruzin/golang-tmdb"
@@ -35,7 +36,11 @@ func (c *TMDbClient) Init() error {
 
 // identify returns the ID of best match movie search result, or an error
 func (c *TMDbClient) identify(m types.Media) (api.MovieDetails, error) {
-	res, err := c.client.GetSearchMovies(m.MovieMetadata.Title, nil)
+	opts := map[string]string{}
+	if m.MovieMetadata.ReleaseYear > 0 {
+		opts["year"] = strconv.FormatInt(int64(m.MovieMetadata.ReleaseYear), 10)
+	}
+	res, err := c.client.GetSearchMovies(m.MovieMetadata.Title, opts)
 	if err != nil || res == nil {
 		return api.MovieDetails{}, err
 	}
@@ -62,7 +67,7 @@ func (c *TMDbClient) addTMDbMetadata(m types.Media) types.Media {
 
 	m.MovieMetadata.Title = movie.Title
 	log.Debugf("tmdb_decorator: parsing release date: %s", movie.ReleaseDate)
-	if p, err := time.Parse(time.RFC3339, movie.ReleaseDate); err != nil {
+	if p, err := time.Parse("2006-01-02", movie.ReleaseDate); err != nil {
 		log.Error(err)
 	} else {
 		m.MovieMetadata.ReleaseYear = p.Year()
@@ -74,12 +79,14 @@ func (c *TMDbClient) addTMDbMetadata(m types.Media) types.Media {
 func (c *TMDbClient) Process(in <-chan types.Media, out chan<- types.Media) {
 	log.Trace("started tmdb_decorator processor")
 	for m := range in {
-		log.Tracef("tmdb_decorator: received input: %v", m)
-		if m.Type != movie.Movie {
-			log.Infof("tmdb_decorator: %s type %s != Movie, skipping", m.SourcePath, m.Type)
-			continue
+		log.Tracef("tmdb_decorator: received input: %#v", m)
+		if m.Type == movie.Movie {
+			log.Infof("tmdb_decorator: looking up %s in tmdb", m.SourcePath)
+			m = c.addTMDbMetadata(m)
+		} else {
+			log.Debugf("tmdb_decorator: %s type [%s] != Movie, skipping", m.SourcePath, m.Type)
 		}
-		out <- c.addTMDbMetadata(m)
+		out <- m
 	}
 }
 

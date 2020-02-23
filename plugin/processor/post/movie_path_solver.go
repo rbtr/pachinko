@@ -29,27 +29,27 @@ func (*MoviePathSolver) Init() error {
 }
 
 func (p *MoviePathSolver) Process(in <-chan types.Media, out chan<- types.Media) {
-	log.Trace("started movie_dest processor")
+	log.Trace("started movie_destination processor")
 	for m := range in {
-		log.Tracef("movie_destination: received input %v", m)
+		log.Tracef("movie_destination: received input %#v", m)
 		if m.Type != movie.Movie {
-			log.Debugf("movie_destination: %s, type %s != Movie, skipping", m.SourcePath, m.Type)
-			continue
-		}
-
-		if p.MovieDirs {
-			m.DestinationPath = path.Join(
-				p.DestDir,
-				p.MoviesPrefix,
-				fmt.Sprintf("%s (%d)", m.MovieMetadata.Title, m.MovieMetadata.ReleaseYear),
-				fmt.Sprintf("%s (%d)%s", m.MovieMetadata.Title, m.MovieMetadata.ReleaseYear, path.Ext(m.SourcePath)),
-			)
+			log.Debugf("movie_destination: %s, type [%s] != Movie, skipping", m.SourcePath, m.Type)
 		} else {
-			m.DestinationPath = path.Join(
-				p.DestDir,
-				p.MoviesPrefix,
-				fmt.Sprintf("%s (%d)%s", m.MovieMetadata.Title, m.MovieMetadata.ReleaseYear, path.Ext(m.SourcePath)),
-			)
+			log.Infof("movie_destination: solving dest for %s", m.SourcePath)
+			if p.MovieDirs {
+				m.DestinationPath = path.Join(
+					p.DestDir,
+					p.MoviesPrefix,
+					fmt.Sprintf("%s (%d)", m.MovieMetadata.Title, m.MovieMetadata.ReleaseYear),
+					fmt.Sprintf("%s (%d)%s", m.MovieMetadata.Title, m.MovieMetadata.ReleaseYear, path.Ext(m.SourcePath)),
+				)
+			} else {
+				m.DestinationPath = path.Join(
+					p.DestDir,
+					p.MoviesPrefix,
+					fmt.Sprintf("%s (%d)%s", m.MovieMetadata.Title, m.MovieMetadata.ReleaseYear, path.Ext(m.SourcePath)),
+				)
+			}
 		}
 		out <- m
 	}

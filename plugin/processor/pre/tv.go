@@ -34,10 +34,12 @@ type TVPreProcessor struct {
 }
 
 func (p *TVPreProcessor) Init() error {
+	log.Trace("tv_path_metadata: initializing")
 	for _, str := range p.MatcherStrings {
 		r := regexp.MustCompile(str)
 		p.matchers = append(p.matchers, r)
 	}
+	log.Tracef("tv_path_metadata: initialized %d matchers", len(p.matchers))
 	return nil
 }
 
@@ -88,25 +90,32 @@ func (p *TVPreProcessor) identify(m types.Media) bool {
 			log.Tracef("tv_path_metadata: regexp %s matched %s", matcher, m.SourcePath)
 			return true
 		}
+		log.Tracef("tv_path_metadata: regexp %s did not match %s", matcher, m.SourcePath)
 	}
+	log.Tracef("tv_path_metadata: %s did not match identifiers", m.SourcePath)
 	return false
 }
 
 func (p *TVPreProcessor) Process(in <-chan types.Media, out chan<- types.Media) {
 	log.Trace("started tv_path_metadata processor")
 	for m := range in {
-		log.Tracef("tv_path_metadata: received input: %v", m)
-		if m.Category != types.Video {
-			log.Debugf("tv_path_metadata: %s category %s != video, skipping", m.SourcePath, m.Category)
-			continue
+		log.Tracef("tv_path_metadata: received input: %#v", m)
+		if m.Category == types.Video {
+			log.Infof("tv_path_metadata: %s category == video, testing for TV", m.SourcePath)
+			if p.identify(m) {
+				log.Infof("tv_path_metadata: %s is TV", m.SourcePath)
+				m.Type = tv.TV
+			}
+		} else {
+			log.Debugf("tv_path_metadata: %s category [%s] != video, skipping", m.SourcePath, m.Category)
 		}
-		if !p.identify(m) {
-			log.Debugf("tv_path_metadata: %s type %s != TV, skipping", m.SourcePath, m.Type)
-			continue
+		if m.Type == tv.TV {
+			log.Infof("tv_path_metadata: extracting metadata for %v", m)
+			m = p.extractMetadata(m)
+		} else {
+			log.Debugf("tv_path_metadata: %s type [%s] != TV, skipping", m.SourcePath, m.Type)
 		}
-		m.Type = tv.TV
-		log.Debugf("tv_path_metadata: received input %v", m)
-		out <- p.extractMetadata(m)
+		out <- m
 	}
 }
 

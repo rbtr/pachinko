@@ -111,13 +111,15 @@ func (c *TVDbClient) addTVDBMetadata(m types.Media) types.Media {
 func (c *TVDbClient) Process(in <-chan types.Media, out chan<- types.Media) {
 	log.Trace("started tvdb_decorator processor")
 	for m := range in {
-		log.Tracef("tvdb_decorator: received input: %v", m)
-		if m.Type != tv.TV {
-			log.Infof("tvdb_decorator: %s type %s != TV, skipping", m.SourcePath, m.Type)
-			continue
+		log.Tracef("tvdb_decorator: received input: %#v", m)
+		if m.Type == tv.TV {
+			log.Infof("tvdb_decorator: looking up %s in tvdb", m.SourcePath)
+			<-c.limiter.C // rate limiting on tvdb api calls
+			m = c.addTVDBMetadata(m)
+		} else {
+			log.Debugf("tvdb_decorator: %s type [%s] != TV, skipping", m.SourcePath, m.Type)
 		}
-		<-c.limiter.C
-		out <- c.addTVDBMetadata(m)
+		out <- m
 	}
 }
 

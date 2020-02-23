@@ -10,6 +10,7 @@ package types
 type Category string
 
 const (
+	Archive  Category = "archive"
 	Image    Category = "image"
 	Subtitle Category = "subtitle"
 	Text     Category = "text"

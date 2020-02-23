@@ -23,7 +23,7 @@ func (*Logger) Init() error {
 func (stdr *Logger) Receive(c <-chan types.Media) {
 	log.Trace("started stdout output")
 	for m := range c {
-		log.Tracef("stdout_output: received_input %v", m)
+		log.Tracef("stdout_output: received_input %#v", m)
 		if m.SourcePath != "" && m.DestinationPath != "" {
 			log.Infof("stdout_output: %s -> %s", m.SourcePath, m.DestinationPath)
 		}

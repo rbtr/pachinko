@@ -14,12 +14,12 @@ import (
 
 	"github.com/rbtr/pachinko/plugin/processor"
 	"github.com/rbtr/pachinko/types"
-	"github.com/rbtr/pachinko/types/metadata/tv"
+	"github.com/rbtr/pachinko/types/metadata/movie"
 	log "github.com/sirupsen/logrus"
 )
 
 var defaultMovieMatchers = []string{
-	`(?i)\b([\s\w.-]*)[\s.\/-]+[\s.\/-]?(?:[\s\(.\/-]?(\d{4})[\s\).\/-]?)(?:\/|.[A-Za-z]{3})`, // matches "Name (YEAR)."
+	`(?i)\b([\s\w.-]*)[\s.\/-]+[\s.\/-]?(?:[\s\(.\/-]?(\d{4})[\s\).\/-]?)(?:\s*\[.*\])?(?:\/|.[A-Za-z]{3})`, // matches "Name (YEAR)."
 }
 
 type MoviePreProcessor struct {
@@ -30,10 +30,12 @@ type MoviePreProcessor struct {
 }
 
 func (p *MoviePreProcessor) Init() error {
+	log.Trace("movie_path_metadata: initializing")
 	for _, str := range p.MatcherStrings {
 		r := regexp.MustCompile(str)
 		p.matchers = append(p.matchers, r)
 	}
+	log.Tracef("movie_path_metadata: initialized %d matchers", len(p.matchers))
 	return nil
 }
 
@@ -74,25 +76,32 @@ func (p *MoviePreProcessor) identify(m types.Media) bool {
 			log.Tracef("movie_path_metadata: regexp %s matched %s", matcher, m.SourcePath)
 			return true
 		}
+		log.Tracef("movie_path_metadata: regexp %s did not match %s", matcher, m.SourcePath)
 	}
+	log.Tracef("movie_path_metadata: %s did not match identifiers", m.SourcePath)
 	return false
 }
 
 func (p *MoviePreProcessor) Process(in <-chan types.Media, out chan<- types.Media) {
 	log.Trace("started movie_path_metadata processor")
 	for m := range in {
-		log.Tracef("movie_path_metadata: received input: %v", m)
-		if m.Category != types.Video {
-			log.Debugf("movie_path_metadata: %s category %s != video, skipping", m.SourcePath, m.Category)
-			continue
+		log.Tracef("movie_path_metadata: received input: %#v", m)
+		if m.Category == types.Video {
+			log.Infof("movie_path_metadata: %s category == video, testing for movie", m.SourcePath)
+			if p.identify(m) {
+				log.Infof("movie_path_metadata: %s is movie", m.SourcePath)
+				m.Type = movie.Movie
+			}
+		} else {
+			log.Debugf("movie_path_metadata: %s category [%s] != video, skipping", m.SourcePath, m.Category)
 		}
-		if !p.identify(m) {
-			log.Debugf("movie_path_metadata: %s type %s != TV, skipping", m.SourcePath, m.Type)
-			continue
+		if m.Type == movie.Movie {
+			log.Infof("movie_path_metadata: extracting metadata for %v", m)
+			m = p.extractMetadata(m)
+		} else {
+			log.Debugf("movie_path_metadata: %s type [%s] != Movie, skipping", m.SourcePath, m.Type)
 		}
-		m.Type = tv.TV
-		log.Debugf("movie_path_metadata: received input %v", m)
-		out <- p.extractMetadata(m)
+		out <- m
 	}
 }
 
