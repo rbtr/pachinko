@@ -12,6 +12,7 @@ import (
 
 	"github.com/mitchellh/mapstructure"
 	"github.com/rbtr/pachinko/internal/pipeline"
+	internalpre "github.com/rbtr/pachinko/internal/plugin/processor/pre"
 	"github.com/rbtr/pachinko/plugin/input"
 	"github.com/rbtr/pachinko/plugin/output"
 	"github.com/rbtr/pachinko/plugin/processor"
@@ -25,20 +26,20 @@ type RootConfig struct {
 	LogFormat string `mapstructure:"log-format"`
 }
 
-type ConfigCmdConfig struct {
+type CmdConfig struct {
 	RootConfig `mapstructure:",squash"`
-	Format     string   `mapstructure:"format"`
-	Inputs     []string `mapstructure:"inputs"`
-	Outputs    []string `mapstructure:"outputs"`
-	Processors []string `mapstructure:"processors"`
+	Format     string                      `mapstructure:"format"`
+	Inputs     []string                    `mapstructure:"inputs"`
+	Outputs    []string                    `mapstructure:"outputs"`
+	Processors map[processor.Type][]string `mapstructure:"processors"`
 }
 
-type SortCmdConfig struct {
+type CmdSort struct {
 	RootConfig `mapstructure:",squash"`
-	Pipeline   pipeline.Config          `mapstructure:"pipeline"`
-	Inputs     []map[string]interface{} `mapstructure:"inputs"`
-	Outputs    []map[string]interface{} `mapstructure:"outputs"`
-	Processors []map[string]interface{} `mapstructure:"processors"`
+	Pipeline   pipeline.Config                             `mapstructure:"pipeline"`
+	Inputs     []map[string]interface{}                    `mapstructure:"inputs"`
+	Outputs    []map[string]interface{}                    `mapstructure:"outputs"`
+	Processors map[processor.Type][]map[string]interface{} `mapstructure:"processors"`
 }
 
 func (c *RootConfig) configLogger() {
@@ -68,7 +69,7 @@ func (c *RootConfig) Validate() error {
 	return nil
 }
 
-func (c *SortCmdConfig) ConfigurePipeline(pipe *pipeline.Pipeline) error {
+func (c *CmdSort) ConfigurePipeline(pipe *pipeline.Pipeline) error {
 	if err := mapstructure.Decode(c.Pipeline, pipe); err != nil {
 		return err
 	}
@@ -102,17 +103,25 @@ func (c *SortCmdConfig) ConfigurePipeline(pipe *pipeline.Pipeline) error {
 		}
 	}
 
-	for _, p := range c.Processors {
-		if name, ok := p["name"]; ok {
-			if initializer, ok := processor.Registry[name.(string)]; ok {
-				plugin := initializer()
-				if err := mapstructure.Decode(p, plugin); err != nil {
-					return err
+	categorizer := internalpre.NewCategorizer()
+	if err := categorizer.Init(); err != nil {
+		return err
+	}
+	pipe.WithProcessors(categorizer)
+
+	for _, t := range processor.Types {
+		for _, p := range c.Processors[t] {
+			if name, ok := p["name"]; ok {
+				if initializer, ok := processor.Registry[t][name.(string)]; ok {
+					plugin := initializer()
+					if err := mapstructure.Decode(p, plugin); err != nil {
+						return err
+					}
+					if err := plugin.Init(); err != nil {
+						return err
+					}
+					pipe.WithProcessors(plugin)
 				}
-				if err := plugin.Init(); err != nil {
-					return err
-				}
-				pipe.WithProcessors(plugin)
 			}
 		}
 	}
@@ -120,16 +129,26 @@ func (c *SortCmdConfig) ConfigurePipeline(pipe *pipeline.Pipeline) error {
 	return nil
 }
 
+func NewCmdSort() *CmdSort {
+	return &CmdSort{
+		Processors: map[processor.Type][]map[string]interface{}{
+			processor.Pre:   {},
+			processor.Intra: {},
+			processor.Post:  {},
+		},
+	}
+}
+
 // LoadConfig loadconfig
-func LoadSortCmdConfig() (*SortCmdConfig, error) {
-	cfg := &SortCmdConfig{}
+func LoadCmdSort() (*CmdSort, error) {
+	cfg := NewCmdSort()
 	viper.SetEnvKeyReplacer(strings.NewReplacer("_", "-"))
 	viper.AutomaticEnv()
 	err := viper.Unmarshal(cfg)
 	return cfg, err
 }
 
-func (c *ConfigCmdConfig) DefaultConfig(p *SortCmdConfig) error {
+func (c *CmdConfig) DefaultConfig(p *CmdSort) error {
 	if len(c.Inputs) == 0 && len(c.Outputs) == 0 && len(c.Processors) == 0 {
 		// no plugins specified, dump configs for them all
 		for k := range input.Registry {
@@ -138,8 +157,10 @@ func (c *ConfigCmdConfig) DefaultConfig(p *SortCmdConfig) error {
 		for k := range output.Registry {
 			c.Outputs = append(c.Outputs, k)
 		}
-		for k := range processor.Registry {
-			c.Processors = append(c.Processors, k)
+		for _, t := range []processor.Type{processor.Pre, processor.Post, processor.Intra} {
+			for k := range processor.Registry[t] {
+				c.Processors[t] = append(c.Processors[t], k)
+			}
 		}
 	}
 
@@ -167,23 +188,25 @@ func (c *ConfigCmdConfig) DefaultConfig(p *SortCmdConfig) error {
 		}
 	}
 
-	for _, name := range c.Processors {
-		log.Tracef("making default config for plugin %s", name)
-		if initializer, ok := processor.Registry[name]; ok {
-			var out map[string]interface{}
-			if err := mapstructure.Decode(initializer(), &out); err != nil {
-				return err
+	for t, names := range c.Processors {
+		for _, name := range names {
+			log.Tracef("making default config for plugin %s", name)
+			if initializer, ok := processor.Registry[t][name]; ok {
+				var out map[string]interface{}
+				if err := mapstructure.Decode(initializer(), &out); err != nil {
+					return err
+				}
+				out["name"] = name
+				p.Processors[t] = append(p.Processors[t], out)
 			}
-			out["name"] = name
-			p.Processors = append(p.Processors, out)
 		}
 	}
 
 	return nil
 }
 
-func LoadConfigCmdConfig() (*ConfigCmdConfig, error) {
-	cfg := &ConfigCmdConfig{}
+func LoadCmdConfig() (*CmdConfig, error) {
+	cfg := &CmdConfig{}
 	viper.SetEnvKeyReplacer(strings.NewReplacer("_", "-"))
 	viper.AutomaticEnv()
 	err := viper.Unmarshal(cfg)

@@ -13,10 +13,10 @@ steps:
   commands:
   - make test
 
-# - name: lint
-#   image: golangci/golangci-lint
-#   commands:
-#   - golangci-lint run -v
+- name: lint
+  image: golangci/golangci-lint
+  commands:
+  - make lint
 
 - name: release
   image: golang:latest

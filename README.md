@@ -8,7 +8,7 @@
 |_|
 
 modular, plugin based media sorter  
-written in go by @rbtr  
+created by @rbtr  
 ```
 ---
 
@@ -20,32 +20,60 @@ written in go by @rbtr
 
 
 ### what it is
-pachinko is a media sorter. it integrates with the tvdb and the moviedb to, given a directory of reasonably named mix media, organize that media into a clean hierarchal directory directory structure ideal for use in media servers like plex, kodi/xbmc, etc.
+pachinko is a media sorter. it integrates with the tvdb and the moviedb to, given a directory of reasonably named mix media, organize that media into a clean hierarchal directory structure ideal for use in media servers like plex, kodi/xbmc, etc.
 
 unlike some of the prior implementations of this idea, pachinko was designed from inception to be automation and container-friendly.  
 it has no heavy gui - configure it through the config file or via flags, then execute it and walk away.
 
-it is written in go so that it is approachable for anyone interested in contributing without sacrificing too much performance.  
-the plugin-style architecture makes the codebase clear and efficient.
+it is written in go so that it is approachable for anyone interested in contributing without sacrificing performance.  
+the plugin-style architecture keeps the core codebase clear and efficient.
 
 ### design
 
+#### plugins
 pachinko has a plugin based pipeline design. the base plugin types are:
 - input - add data from a datasource to the stream
 - processor - modify the datastream in-flight
-- output -  write data from the stream to a datastore
+- output - deal with the processed data by e.g. moving files from their original dir to their sorted path.
 
-these plugin types make pachinko very flexible. composing a plugin pipeline of any combination of plugins is possible.
+these base plugin types make pachinko flexible. composing a pipeline of many combination of plugins is possible.
 
 additionally there are subtypes of `processor` plugins:
-- extractor - parse data already present in the datastream to classify, clean, or add information to the data
-- decorator - use external datasources to add information to items in the datastream
+- preprocessor - parse data already present in the datastream to classify, clean, or add information to the data before main processor plugins run. the preprocessors make modifications to the datastream based only on the data already present in the objects in the datastream.
+- (intra)processor - the main working processors, where external datasources may be queried to enrich the datastream and significant modifications made. 
+- postprocessor - last chance to modify the datastream before it is sent to outputs, but after the rich data has been added. the postprocessors make final modifications that shouldn't be the responsibility of the intraprocessors but may depend on the data enrichments that those have added.
 
-they differ primarily in that decorators supplement the datastream from external sources, and extractors use only the extant data in the stream.
+they subtypes exist mainly to allow ordering of plugin flow. 
 
-pachinko currently supports two data types: tv and movie video files. other datatypes planned include: images (and whatever you would like to contribute!)
+#### datatypes
+pachinko currently supports these data types: 
+- tv and 
+- movie video files
 
-pachinko currently supports one input and one output datastore: local filesystem (aka `path`). other datastore types planned include : s3 (and whatever you would like to contribute!)
+other datatypes planned include: images (and whatever you would like to contribute!)
+
+#### inputs
+pachinko currently supports these inputs: 
+- local filesystem (`path`). 
+
+other datastore types planned include : s3 (and whatever you would like to contribute!)
+
+#### outputs
+pachinko currently supports these outputs:
+- local filesystem (`path_mover`)
+- stdout (`logger`)
+
+#### processors
+pachinko has the following required processors:
+- categorizer (internal) 
+
+pachinko has the following optional processors:
+- tv identifier (pre-tv)
+- movie identifier (pre-movie)
+- tvdb (intra-tvdb)
+- tmdb (intra-tmdb)
+- tv path solver (post-tv_path_solver)
+- movie path solver (post-movie_path_solver)
 
 ### how to run it
 pachinko is distributed as a container and as a cross-platform binary.  
@@ -69,7 +97,7 @@ dry-run: true
 log-level: debug
 inputs: []
 outputs: []
-processors: []
+processors: {}
 ```
 
 the full, current list of options is available by running `./pachinko config` on the commandline.  
@@ -114,4 +142,4 @@ read the full license terms [here](https://www.mozilla.org/en-US/MPL/2.0/FAQ/).
 
 created by @rbtr  
 inspired by the functionality and frustrating user experience of: [sorttv by cliffe](https://sourceforge.net/projects/sorttv/), filebot, tinymediamanager, and others  
-and the excellent architecture patterns of coredns, telegraf
+and the excellent architecture patterns of telegraf, caddy, coredns, and others

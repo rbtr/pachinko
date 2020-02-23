@@ -1,10 +1,9 @@
 package testing
 
 import (
-	"github.com/rbtr/pachinko/internal/types"
-	"github.com/rbtr/pachinko/internal/types/metadata/movie"
-	"github.com/rbtr/pachinko/internal/types/metadata/tv"
-	"github.com/rbtr/pachinko/internal/types/metadata/video"
+	"github.com/rbtr/pachinko/types"
+	"github.com/rbtr/pachinko/types/metadata/movie"
+	"github.com/rbtr/pachinko/types/metadata/tv"
 )
 
 type Test struct {
@@ -33,7 +32,7 @@ var TV []*Test = []*Test{
 			"Mr Robot/Season 02/Episode 05",
 		},
 		types.Media{
-			Category: video.Video,
+			Category: types.Video,
 			Type:     tv.TV,
 			TVMetadata: tv.Metadata{
 				Name: "Mr Robot",
@@ -52,7 +51,7 @@ var TV []*Test = []*Test{
 			"/src/Broad City (2014) S01-03 Season 01-03 (1080p HEVC AAC 2.0)/Broad City 03x09 Getting There.mkv",
 		},
 		types.Media{
-			Category: video.Video,
+			Category: types.Video,
 			Type:     tv.TV,
 			TVMetadata: tv.Metadata{
 				Name: "Broad City",
@@ -71,7 +70,7 @@ var TV []*Test = []*Test{
 			"/src/Doctor Who 2005 S12E03 1080p HEVC x265/Doctor.Who.2005.S12E03.1080p.HEVC.x265.mkv",
 		},
 		types.Media{
-			Category: video.Video,
+			Category: types.Video,
 			Type:     tv.TV,
 			TVMetadata: tv.Metadata{
 				Name:        "Doctor Who",
@@ -94,11 +93,39 @@ var Movies []*Test = []*Test{
 			"/src/Blade Runner 2049 (2017)/Blade Runner 2049.mkv",
 		},
 		types.Media{
-			Category: video.Video,
+			Category: types.Video,
 			Type:     movie.Movie,
 			MovieMetadata: movie.Metadata{
 				Title:       "Blade Runner 2049",
 				ReleaseYear: 2017,
+			},
+		},
+	},
+	{
+		"typical",
+		[]string{
+			"/src/Finding Nemo (2003).mkv",
+		},
+		types.Media{
+			Category: types.Video,
+			Type:     movie.Movie,
+			MovieMetadata: movie.Metadata{
+				Title:       "Finding Nemo",
+				ReleaseYear: 2003,
+			},
+		},
+	},
+	{
+		"metadata",
+		[]string{
+			"/src/Frozen 2 (2019)  [1080p x265 10bit FS93].mkv",
+		},
+		types.Media{
+			Category: types.Video,
+			Type:     movie.Movie,
+			MovieMetadata: movie.Metadata{
+				Title:       "Frozen 2",
+				ReleaseYear: 2019,
 			},
 		},
 	},

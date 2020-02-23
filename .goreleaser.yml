@@ -1,0 +1,16 @@
+nfpms:
+- name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
+  bindir: "/usr/local/bin"
+  replacements:
+    amd64: x86_64
+  formats:
+  - deb
+  - rpm
+  empty_folders:
+  - /etc/pachinko
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'

@@ -4,6 +4,9 @@ MODULE = pachinko
 GCFLAGS = -gcflags "all=-trimpath=$(PWD)" -asmflags "all=-trimpath=$(PWD)"
 GO_BUILD_ENV_VARS := CGO_ENABLED=0 GOOS=linux GOARCH=amd64
 
+lint: ## lint
+	@golangci-lint run -v
+
 test: ## run tests
 	@go test ./...
 
