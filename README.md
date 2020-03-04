@@ -1,4 +1,4 @@
-<img align="right" width="200px" src=gopher.png>
+<img align="right" width="290px" src=gopher.png>
 
 ```text
              _   _     _       
