@@ -1,0 +1,8 @@
+# /etc/systemd/system/pachinko@.service
+[Unit]
+Description=Run pachinko from %I
+
+[Service]
+Type=simple
+Restart=on-failure
+ExecStart=/usr/local/bin/pachinko sort --config /etc/pachinko/pachinko.yaml

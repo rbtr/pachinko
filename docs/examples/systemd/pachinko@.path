@@ -1,0 +1,11 @@
+# /etc/systemd/system/pachinko@.path
+# enable with `systemctl enable pachinko@<path-to-src>.path`
+# where "path-to-src" is the output of `systemd-escape /path/to/src`
+[Unit]
+Description=Run pachinko automatically when files are added to %I
+
+[Path]
+DirectoryNotEmpty=%I
+
+[Install]
+WantedBy=default.target

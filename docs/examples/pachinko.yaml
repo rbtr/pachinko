@@ -1,0 +1,37 @@
+# /etc/pachinko/pachinko.yaml
+dry-run: false
+inputs:
+- name: filepath
+  src-dir: /src
+log-format: "text"
+log-level: "info"
+outputs:
+- name: stdout
+- create-dirs: true
+  dry-run: false
+  name: path-mover
+  overwrite: false
+pipeline:
+  buffer: 10
+processors:
+  intra:
+  - api-key: "2ba61c9f36d53da5ff58042ec71edeee"
+    name: tmdb
+  - api-key: "1ffca36f894fd585649d26b1fdc48d8c"
+    name: tvdb
+    request-limit: 10
+  post:
+  - dest-dir: /media
+    movie-dirs: true
+    movie-prefix: movies
+    name: movie-path-solver
+  - dest-dir: /media
+    episode-names: false
+    name: tv-path-solver
+    season-dirs: true
+    tv-prefix: tv
+  pre:
+  - name: movie
+    sanitize-name: true
+  - name: tv
+    sanitize-name: true
