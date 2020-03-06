@@ -8,6 +8,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 package output
 
 import (
+	"io"
 	"os"
 	"path/filepath"
 
@@ -36,12 +37,50 @@ func (mv *FilepathMover) mkdir(dir string) error {
 	return os.MkdirAll(dir, os.ModePerm)
 }
 
-func (mv *FilepathMover) move(src, dest string) error {
+// rename attempts to rename the file
+// if the source and dest are on the same volume, this is preferred - it's fast
+// and atomic and handled by the filesystem
+// if src and dest are on different volumes, it will error with a cross-device
+// link message
+func (mv *FilepathMover) rename(src, dest string) error {
 	if mv.DryRun {
-		log.Infof("move_output: (DRY_RUN) mv %s -> %s", src, dest)
+		log.Infof("move_output: (DRY_RUN) rename %s -> %s", src, dest)
 		return nil
 	}
 	return os.Rename(src, dest)
+}
+
+// move copies the file from src to dest
+// this is slow as it actually copies the bits over from src to dest
+// should only be used to move data between volumes since rename is always
+// faster within the filesystem boundary
+func (mv *FilepathMover) move(src, dest string) error {
+	if mv.DryRun {
+		log.Infof("move_output: (DRY_RUN) copy %s -> %s", src, dest)
+		return nil
+	}
+
+	in, err := os.Open(src)
+	if err != nil {
+		return errors.Errorf("error opening src: %s", err)
+	}
+	defer in.Close()
+
+	out, err := os.Create(dest)
+	if err != nil {
+		return errors.Errorf("error opening dest: %s", err)
+	}
+	defer out.Close()
+
+	if _, err = io.Copy(out, in); err != nil {
+		return errors.Errorf("error writing dest: %s", err)
+	}
+
+	err = os.Remove(src)
+	if err != nil {
+		return errors.Errorf("error removing src: %s", err)
+	}
+	return nil
 }
 
 func (mv *FilepathMover) moveMedia(m types.Media) error {
@@ -65,7 +104,11 @@ func (mv *FilepathMover) moveMedia(m types.Media) error {
 		}
 	}
 	// move src to dest
-	return mv.move(m.SourcePath, m.DestinationPath)
+	if err := mv.rename(m.SourcePath, m.DestinationPath); err != nil {
+		// failed to rename - probably cross-device link so try to move
+		return mv.move(m.SourcePath, m.DestinationPath)
+	}
+	return nil
 }
 
 // Receive implements the Plugin interface on the FilepathMover
