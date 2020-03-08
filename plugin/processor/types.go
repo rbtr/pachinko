@@ -1,6 +1,8 @@
 package processor
 
 import (
+	"context"
+
 	"github.com/rbtr/pachinko/types"
 	log "github.com/sirupsen/logrus"
 )
@@ -18,13 +20,13 @@ const (
 var Types []Type = []Type{Pre, Intra, Post}
 
 type Processor interface {
-	Init() error
+	Init(context.Context) error
 	Process(<-chan types.Media, chan<- types.Media)
 }
 
 type Func func(<-chan types.Media, chan<- types.Media)
 
-func (Func) Init() error {
+func (Func) Init(context.Context) error {
 	return nil
 }
 

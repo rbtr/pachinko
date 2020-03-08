@@ -8,6 +8,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 package post
 
 import (
+	"context"
 	"fmt"
 	"path"
 
@@ -24,7 +25,7 @@ type MoviePathSolver struct {
 	OutputFormat string `mapstructure:"format"`
 }
 
-func (*MoviePathSolver) Init() error {
+func (*MoviePathSolver) Init(context.Context) error {
 	return nil
 }
 

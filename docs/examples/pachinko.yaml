@@ -11,6 +11,8 @@ outputs:
   dry-run: false
   name: path-mover
   overwrite: false
+- authfile: "/etc/pachinko/trakt"
+  name: trakt-collector
 pipeline:
   buffer: 10
 processors:

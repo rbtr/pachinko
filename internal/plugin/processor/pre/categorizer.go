@@ -8,6 +8,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 package pre
 
 import (
+	"context"
 	"path"
 	"strings"
 
@@ -61,7 +62,7 @@ type FileCategorizer struct {
 	fileExtensionCategories map[string]types.Category
 }
 
-func (cat *FileCategorizer) Init() error {
+func (cat *FileCategorizer) Init(context.Context) error {
 	log.Trace("categorizer initializing")
 	cat.fileExtensionCategories = map[string]types.Category{}
 	// transpose the category/extension map for immediate lookups

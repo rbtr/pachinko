@@ -8,6 +8,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 package post
 
 import (
+	"context"
 	"fmt"
 	"path"
 
@@ -25,7 +26,7 @@ type TVPathSolver struct {
 	OutputFormat string `mapstructure:"format"`
 }
 
-func (*TVPathSolver) Init() error {
+func (*TVPathSolver) Init(context.Context) error {
 	return nil
 }
 

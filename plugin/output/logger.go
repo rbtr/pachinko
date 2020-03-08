@@ -8,6 +8,8 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 package output
 
 import (
+	"context"
+
 	"github.com/rbtr/pachinko/types"
 	log "github.com/sirupsen/logrus"
 )
@@ -15,7 +17,7 @@ import (
 // Logger is a noop logging output used for dry-runs and testing
 type Logger struct{}
 
-func (*Logger) Init() error {
+func (*Logger) Init(context.Context) error {
 	return nil
 }
 

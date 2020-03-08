@@ -14,6 +14,8 @@ pipeline datastream.
 package input
 
 import (
+	"context"
+
 	"github.com/rbtr/pachinko/types"
 	log "github.com/sirupsen/logrus"
 )
@@ -21,7 +23,7 @@ import (
 // input input
 type Input interface {
 	Consume(chan<- types.Media)
-	Init() error
+	Init(context.Context) error
 }
 
 var Registry map[string](func() Input) = map[string](func() Input){}

@@ -28,7 +28,7 @@ import (
 // WordMatcher regex
 var matcher *regexp.Regexp = regexp.MustCompile(`[^\w]`)
 
-// Client TODO
+// TVDbClient adds metadata from the TVDb
 type TVDbClient struct {
 	APIKey       string `mapstructure:"api-key"`
 	RequestLimit int64  `mapstructure:"request-limit"`
@@ -37,7 +37,7 @@ type TVDbClient struct {
 	limiter *time.Ticker
 }
 
-func (c *TVDbClient) Init() error {
+func (c *TVDbClient) Init(context.Context) error {
 	authn := &models.Auth{
 		Apikey: c.APIKey,
 	}
@@ -101,6 +101,7 @@ func (c *TVDbClient) addTVDBMetadata(m types.Media) types.Media {
 		return m
 	}
 	log.Debugf("tvdb_decorator: got episode from tvdb: %v", ep)
+	m.Identifiers["tvdb"] = strconv.FormatInt(ep.ID, 10)
 	m.TVMetadata.Name = series.SeriesName
 	m.TVMetadata.AbsoluteNumber = int(ep.AbsoluteNumber)
 	m.TVMetadata.Episode.Title = ep.EpisodeName
