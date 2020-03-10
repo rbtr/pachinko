@@ -8,6 +8,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 package intra
 
 import (
+	"context"
 	"strconv"
 	"time"
 
@@ -26,7 +27,7 @@ type TMDbClient struct {
 	client *api.Client
 }
 
-func (c *TMDbClient) Init() error {
+func (c *TMDbClient) Init(context.Context) error {
 	var err error
 	if c.client, err = api.Init(c.APIKey); err != nil {
 		return err
@@ -64,14 +65,16 @@ func (c *TMDbClient) addTMDbMetadata(m types.Media) types.Media {
 		log.Errorf("tmdb_decorator: error identifying movie: %s", err)
 		return m
 	}
-
-	m.MovieMetadata.Title = movie.Title
+	log.Debugf("tmdb_decorator: got movie from tmdb: %v", movie)
+	m.Identifiers["tmdb"] = strconv.FormatInt(movie.ID, 10)
+	m.Identifiers["imdb"] = movie.IMDbID
 	log.Debugf("tmdb_decorator: parsing release date: %s", movie.ReleaseDate)
 	if p, err := time.Parse("2006-01-02", movie.ReleaseDate); err != nil {
 		log.Error(err)
 	} else {
 		m.MovieMetadata.ReleaseYear = p.Year()
 	}
+	m.MovieMetadata.Title = movie.Title
 	log.Tracef("tmdb_decorator: populated %v from tmdb", m)
 	return m
 }

@@ -8,6 +8,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 package tvmeta
 
 import (
+	"context"
 	"regexp"
 	"strconv"
 	"strings"
@@ -33,7 +34,7 @@ type TVPreProcessor struct {
 	matchers []*regexp.Regexp
 }
 
-func (p *TVPreProcessor) Init() error {
+func (p *TVPreProcessor) Init(context.Context) error {
 	log.Trace("tv_path_metadata: initializing")
 	for _, str := range p.MatcherStrings {
 		r := regexp.MustCompile(str)

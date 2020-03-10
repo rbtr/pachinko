@@ -8,6 +8,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 package output
 
 import (
+	"context"
 	"io"
 	"os"
 	"path/filepath"
@@ -25,7 +26,7 @@ type FilepathMover struct {
 	Overwrite  bool `mapstructure:"overwrite"`
 }
 
-func (*FilepathMover) Init() error {
+func (*FilepathMover) Init(context.Context) error {
 	return nil
 }
 

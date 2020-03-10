@@ -26,8 +26,8 @@ import (
 var cfgFile string
 var rootCtx context.Context
 
-// rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
+// root represents the base command when called without any subcommands
+var root = &cobra.Command{
 	Use: "pachinko",
 	Long: `
              _   _     _
@@ -40,21 +40,21 @@ pluggable media sorter`,
 }
 
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
+	if err := root.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
+	cobra.OnInitialize(rootConfig)
 
-	// bind flags
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.pachinko.yaml)")
-	rootCmd.PersistentFlags().Bool("dry-run", false, "run pipeline as read only and do not make changes")
-	rootCmd.PersistentFlags().StringP("log-level", "v", "info", "log verbosity (trace,debug,info,warn,error)")
-	rootCmd.PersistentFlags().String("log-format", "text", "log format (text,json)")
-	if err := viper.BindPFlags(rootCmd.PersistentFlags()); err != nil {
+	// bind root flags
+	root.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.pachinko.yaml)")
+	root.PersistentFlags().Bool("dry-run", false, "run pipeline as read only and do not make changes")
+	root.PersistentFlags().StringP("log-level", "v", "info", "log verbosity (trace,debug,info,warn,error)")
+	root.PersistentFlags().String("log-format", "text", "log format (text,json)")
+	if err := viper.BindPFlags(root.PersistentFlags()); err != nil {
 		log.Fatal(err)
 	}
 
@@ -72,7 +72,7 @@ func init() {
 	}()
 }
 
-func initConfig() {
+func rootConfig() {
 	if cfgFile != "" {
 		viper.SetConfigFile(cfgFile)
 	} else {

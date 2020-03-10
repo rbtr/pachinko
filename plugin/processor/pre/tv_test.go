@@ -8,6 +8,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 package tvmeta
 
 import (
+	"context"
 	"testing"
 
 	internaltesting "github.com/rbtr/pachinko/internal/testing"
@@ -17,7 +18,7 @@ import (
 
 func TestTVPreProcessor_extractMetadata(t *testing.T) {
 	tv := &TVPreProcessor{MatcherStrings: defaultTVMatchers, Sanitize: true}
-	tv.Init()
+	tv.Init(context.TODO())
 	for _, tt := range internaltesting.TV {
 		tt := tt
 		for _, in := range tt.Inputs {
@@ -45,7 +46,7 @@ func TestTVPreProcessor_extractMetadata(t *testing.T) {
 
 func TestTVPreProcessor_identify(t *testing.T) {
 	p := &TVPreProcessor{MatcherStrings: defaultTVMatchers, Sanitize: true}
-	_ = p.Init()
+	_ = p.Init(context.TODO())
 	for _, tt := range internaltesting.TV {
 		tt := tt
 		for _, in := range tt.Inputs {

@@ -18,6 +18,7 @@ import (
 
 // Media is the container struct for a file flowing through the entire pipeline
 type Media struct {
+	Identifiers     map[string]string
 	SourcePath      string
 	DestinationPath string
 	Category        Category

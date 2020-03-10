@@ -18,7 +18,7 @@ build: #vendor ## build
 		-o bin/$(MODULE) ./
 
 clean: ## clean workspace
-	@rm -rf ./bin ./pachinko
+	@rm -rf ./bin ./$(MODULE)
 
 help: ## print this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

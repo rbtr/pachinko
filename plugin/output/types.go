@@ -14,6 +14,8 @@ the end of processing.
 package output
 
 import (
+	"context"
+
 	"github.com/rbtr/pachinko/types"
 	log "github.com/sirupsen/logrus"
 )
@@ -21,7 +23,7 @@ import (
 // Output is plugin interface to handle the result
 type Output interface {
 	Receive(<-chan types.Media)
-	Init() error
+	Init(context.Context) error
 }
 
 var Registry map[string](func() Output) = map[string](func() Output){}

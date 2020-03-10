@@ -14,14 +14,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// sortCmd represents the sort command
-var sortCmd = &cobra.Command{
+// sort represents the sort command
+var sort = &cobra.Command{
 	Use:   "sort",
 	Short: "Run the sorting pipeline.",
 	Long: `
 Use this command to execute the sorting pipeline.
 
-With no arguments, sort will load the config from %HOME/.pachinko.yaml.
+With no arguments, sort will load the config from $HOME/.pachinko.yaml.
   $ pachinko sort
 
 If no config is provided, no plugins will be loaded and the pipeline will
@@ -29,16 +29,16 @@ not do anything useful.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.SetLevel(log.TraceLevel)
-		cfg, err := config.LoadCmdSort()
+		sortConf, err := config.LoadSort(rootCtx)
 		if err != nil {
 			log.Fatal(err)
 		}
-		if err := cfg.Validate(); err != nil {
+		if err := sortConf.Validate(); err != nil {
 			log.Fatal(err)
 		}
 
 		p := pipeline.NewPipeline()
-		if err := cfg.ConfigurePipeline(p); err != nil {
+		if err := sortConf.ConfigurePipeline(p); err != nil {
 			log.Fatal(err)
 		}
 
@@ -49,5 +49,5 @@ not do anything useful.
 }
 
 func init() {
-	rootCmd.AddCommand(sortCmd)
+	root.AddCommand(sort)
 }

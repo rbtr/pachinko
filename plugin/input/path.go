@@ -8,6 +8,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 package input
 
 import (
+	"context"
 	"os"
 	"path/filepath"
 
@@ -23,7 +24,7 @@ type FilePathInput struct {
 }
 
 // Init noop
-func (*FilePathInput) Init() error {
+func (*FilePathInput) Init(context.Context) error {
 	return nil
 }
 
@@ -43,7 +44,10 @@ func (p *FilePathInput) Consume(sink chan<- types.Media) {
 			return nil
 		}
 		log.Infof("path_input: found file: %s", path)
-		sink <- types.Media{SourcePath: path}
+		sink <- types.Media{
+			Identifiers: make(map[string]string),
+			SourcePath:  path,
+		}
 		count++
 		return nil
 	}); err != nil {

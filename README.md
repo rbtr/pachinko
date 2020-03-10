@@ -62,6 +62,7 @@ other datastore types planned include : s3 (and whatever you would like to contr
 pachinko currently supports these outputs:
 - local filesystem (`path_mover`)
 - stdout (`logger`)
+- [trakt collector (`trakt_collector`)](docs/plugins/outputs/trakt.md)
 
 #### processors
 pachinko has the following required processors:
