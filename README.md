@@ -101,7 +101,7 @@ outputs: []
 processors: {}
 ```
 
-the full, current list of options is available by running `./pachinko config` on the commandline.  
+the full, current list of options is available by running `./pachinko genconf` on the commandline.  
 the core pachinko options are:
 
 | option | inputs | usage |

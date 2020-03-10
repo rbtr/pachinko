@@ -46,7 +46,7 @@ var TV []*Test = []*Test{
 		},
 	},
 	{
-		"dir multimathc SSxEE",
+		"dir multimatch SSxEE",
 		[]string{
 			"/src/Broad City (2014) S01-03 Season 01-03 (1080p HEVC AAC 2.0)/Broad City 03x09 Getting There.mkv",
 		},
@@ -79,6 +79,25 @@ var TV []*Test = []*Test{
 					Number: 3,
 					Season: tv.Season{
 						Number: 12,
+					},
+				},
+			},
+		},
+	},
+	{
+		"special characters in title",
+		[]string{
+			"/src/Tom Clancy's Jack Ryan S01E01.mkv",
+		},
+		types.Media{
+			Category: types.Video,
+			Type:     tv.TV,
+			TVMetadata: tv.Metadata{
+				Name: "Tom Clancy's Jack Ryan",
+				Episode: tv.Episode{
+					Number: 1,
+					Season: tv.Season{
+						Number: 1,
 					},
 				},
 			},

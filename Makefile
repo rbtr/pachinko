@@ -10,12 +10,15 @@ lint: ## lint
 test: ## run tests
 	@go test ./...
 
-build: #vendor ## build
+build: ## build
 	$(GO_BUILD_ENV_VARS) \
 		go build \
 		-tags selinux \
 		$(GCFLAGS) \
 		-o bin/$(MODULE) ./
+
+container: clean build ## container
+	buildah bud -t rbtr/pachinko:latest .
 
 clean: ## clean workspace
 	@rm -rf ./bin ./$(MODULE)
