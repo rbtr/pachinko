@@ -1,8 +1,14 @@
 SHELL := /bin/bash
 MODULE = pachinko
 
+VERSION = $(shell if [[ -z $$(git status --porcelain) ]] && [[ -n $$(git tag -l --points-at HEAD) ]]; then echo $$(git tag -l --points-at HEAD); else echo $$(git rev-parse --short HEAD); fi)
+
+LDFLAGS = -ldflags "-s -w -X github.com/rbtr/pachinko/cmd.Version=$(VERSION)"
 GCFLAGS = -gcflags "all=-trimpath=$(PWD)" -asmflags "all=-trimpath=$(PWD)"
 GO_BUILD_ENV_VARS := CGO_ENABLED=0 GOOS=linux GOARCH=amd64
+
+version: ## version
+	@echo $(VERSION)
 
 lint: ## lint
 	@golangci-lint run -v
@@ -15,6 +21,7 @@ build: ## build
 		go build \
 		-tags selinux \
 		$(GCFLAGS) \
+		$(LDFLAGS) \
 		-o bin/$(MODULE) ./
 
 container: clean build ## container

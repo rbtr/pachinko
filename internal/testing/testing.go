@@ -103,6 +103,25 @@ var TV []*Test = []*Test{
 			},
 		},
 	},
+	{
+		"special characters in title",
+		[]string{
+			"/src/Handmaid's Tale S03E01.mkv",
+		},
+		types.Media{
+			Category: types.Video,
+			Type:     tv.TV,
+			TVMetadata: tv.Metadata{
+				Name: "Handmaid's Tale",
+				Episode: tv.Episode{
+					Number: 1,
+					Season: tv.Season{
+						Number: 3,
+					},
+				},
+			},
+		},
+	},
 }
 
 var Movies []*Test = []*Test{
