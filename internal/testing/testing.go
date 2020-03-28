@@ -122,6 +122,25 @@ var TV []*Test = []*Test{
 			},
 		},
 	},
+	{
+		"special characters in title",
+		[]string{
+			"src/Marvel's Runaways S01E01.mkv",
+		},
+		types.Media{
+			Category: types.Video,
+			Type:     tv.TV,
+			TVMetadata: tv.Metadata{
+				Name: "Marvel's Runaways",
+				Episode: tv.Episode{
+					Number: 1,
+					Season: tv.Season{
+						Number: 1,
+					},
+				},
+			},
+		},
+	},
 }
 
 var Movies []*Test = []*Test{
@@ -156,7 +175,7 @@ var Movies []*Test = []*Test{
 	{
 		"metadata",
 		[]string{
-			"/src/Frozen 2 (2019)  [1080p x265 10bit FS93].mkv",
+			"/src/Frozen 2 (2019) [1080p x265 10bit FS93].mkv",
 		},
 		types.Media{
 			Category: types.Video,
@@ -164,6 +183,20 @@ var Movies []*Test = []*Test{
 			MovieMetadata: movie.Metadata{
 				Title:       "Frozen 2",
 				ReleaseYear: 2019,
+			},
+		},
+	},
+	{
+		"subtitled",
+		[]string{
+			"TRON - Legacy (2010) (1080p BluRay).mkv",
+		},
+		types.Media{
+			Category: types.Video,
+			Type:     movie.Movie,
+			MovieMetadata: movie.Metadata{
+				Title:       "TRON Legacy",
+				ReleaseYear: 2010,
 			},
 		},
 	},

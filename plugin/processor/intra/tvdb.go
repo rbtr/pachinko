@@ -26,7 +26,7 @@ import (
 )
 
 // WordMatcher regex
-var matcher *regexp.Regexp = regexp.MustCompile(`[^\w]`)
+var matcher *regexp.Regexp = regexp.MustCompile(`[^'\w]`)
 
 // TVDbClient adds metadata from the TVDb
 type TVDbClient struct {
