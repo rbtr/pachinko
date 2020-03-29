@@ -21,16 +21,16 @@ var Types []Type = []Type{Pre, Intra, Post}
 
 type Processor interface {
 	Init(context.Context) error
-	Process(<-chan types.Media, chan<- types.Media)
+	Process(<-chan types.Item, chan<- types.Item)
 }
 
-type Func func(<-chan types.Media, chan<- types.Media)
+type Func func(<-chan types.Item, chan<- types.Item)
 
 func (Func) Init(context.Context) error {
 	return nil
 }
 
-func (pf Func) Process(in <-chan types.Media, out chan<- types.Media) {
+func (pf Func) Process(in <-chan types.Item, out chan<- types.Item) {
 	pf(in, out)
 }
 

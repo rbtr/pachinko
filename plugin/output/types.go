@@ -22,7 +22,7 @@ import (
 
 // Output is plugin interface to handle the result
 type Output interface {
-	Receive(<-chan types.Media)
+	Receive(<-chan types.Item)
 	Init(context.Context) error
 }
 

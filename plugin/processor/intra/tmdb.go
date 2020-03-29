@@ -36,7 +36,7 @@ func (c *TMDbClient) Init(context.Context) error {
 }
 
 // identify returns the ID of best match movie search result, or an error
-func (c *TMDbClient) identify(m types.Media) (api.MovieDetails, error) {
+func (c *TMDbClient) identify(m types.Item) (api.MovieDetails, error) {
 	opts := map[string]string{}
 	if m.MovieMetadata.ReleaseYear > 0 {
 		opts["year"] = strconv.FormatInt(int64(m.MovieMetadata.ReleaseYear), 10)
@@ -59,7 +59,7 @@ func (c *TMDbClient) identify(m types.Media) (api.MovieDetails, error) {
 	return *details, nil
 }
 
-func (c *TMDbClient) addTMDbMetadata(m types.Media) types.Media {
+func (c *TMDbClient) addTMDbMetadata(m types.Item) types.Item {
 	movie, err := c.identify(m)
 	if err != nil {
 		log.Errorf("tmdb_decorator: error identifying movie: %s", err)
@@ -79,15 +79,15 @@ func (c *TMDbClient) addTMDbMetadata(m types.Media) types.Media {
 	return m
 }
 
-func (c *TMDbClient) Process(in <-chan types.Media, out chan<- types.Media) {
+func (c *TMDbClient) Process(in <-chan types.Item, out chan<- types.Item) {
 	log.Trace("started tmdb_decorator processor")
 	for m := range in {
 		log.Tracef("tmdb_decorator: received input: %#v", m)
-		if m.Type == movie.Movie {
+		if m.MediaType == movie.Movie {
 			log.Infof("tmdb_decorator: looking up %s in tmdb", m.SourcePath)
 			m = c.addTMDbMetadata(m)
 		} else {
-			log.Debugf("tmdb_decorator: %s type [%s] != Movie, skipping", m.SourcePath, m.Type)
+			log.Debugf("tmdb_decorator: %s type [%s] != Movie, skipping", m.SourcePath, m.MediaType)
 		}
 		out <- m
 	}

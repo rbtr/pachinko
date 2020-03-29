@@ -45,7 +45,7 @@ func (p *TVPreProcessor) Init(context.Context) error {
 }
 
 // extract uses the TV regexp to extract metadata from the input
-func (p *TVPreProcessor) extractMetadata(m types.Media) types.Media {
+func (p *TVPreProcessor) extractMetadata(m types.Item) types.Item {
 	var show, year, season, episode string
 	for _, matcher := range p.matchers {
 		subs := matcher.FindAllStringSubmatch(m.SourcePath, -1)
@@ -85,7 +85,7 @@ func (p *TVPreProcessor) extractMetadata(m types.Media) types.Media {
 }
 
 // identify tests if the input is matched by any of the TV regexp
-func (p *TVPreProcessor) identify(m types.Media) bool {
+func (p *TVPreProcessor) identify(m types.Item) bool {
 	for _, matcher := range p.matchers {
 		if matcher.MatchString(m.SourcePath) {
 			log.Tracef("tv_path_metadata: regexp %s matched %s", matcher, m.SourcePath)
@@ -97,7 +97,7 @@ func (p *TVPreProcessor) identify(m types.Media) bool {
 	return false
 }
 
-func (p *TVPreProcessor) Process(in <-chan types.Media, out chan<- types.Media) {
+func (p *TVPreProcessor) Process(in <-chan types.Item, out chan<- types.Item) {
 	log.Trace("started tv_path_metadata processor")
 	for m := range in {
 		log.Tracef("tv_path_metadata: received input: %#v", m)
@@ -105,16 +105,16 @@ func (p *TVPreProcessor) Process(in <-chan types.Media, out chan<- types.Media) 
 			log.Infof("tv_path_metadata: %s category == video, testing for TV", m.SourcePath)
 			if p.identify(m) {
 				log.Infof("tv_path_metadata: %s is TV", m.SourcePath)
-				m.Type = tv.TV
+				m.MediaType = tv.TV
 			}
 		} else {
 			log.Debugf("tv_path_metadata: %s category [%s] != video, skipping", m.SourcePath, m.Category)
 		}
-		if m.Type == tv.TV {
+		if m.MediaType == tv.TV {
 			log.Infof("tv_path_metadata: extracting metadata for %v", m)
 			m = p.extractMetadata(m)
 		} else {
-			log.Debugf("tv_path_metadata: %s type [%s] != TV, skipping", m.SourcePath, m.Type)
+			log.Debugf("tv_path_metadata: %s type [%s] != TV, skipping", m.SourcePath, m.MediaType)
 		}
 		out <- m
 	}

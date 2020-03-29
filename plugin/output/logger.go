@@ -22,7 +22,7 @@ func (*Logger) Init(context.Context) error {
 }
 
 // Receive implements the Plugin interface on the Logger
-func (stdr *Logger) Receive(c <-chan types.Media) {
+func (stdr *Logger) Receive(c <-chan types.Item) {
 	log.Trace("started stdout output")
 	for m := range c {
 		log.Tracef("stdout_output: received_input %#v", m)

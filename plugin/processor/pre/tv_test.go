@@ -25,7 +25,7 @@ func TestTVPreProcessor_extractMetadata(t *testing.T) {
 			in := in
 			t.Run(tt.Name+"::"+in, func(t *testing.T) {
 				t.Parallel()
-				min := types.Media{SourcePath: in}
+				min := types.Item{SourcePath: in}
 				mout := tv.extractMetadata(min)
 				if mout.TVMetadata.Name != tt.Want.TVMetadata.Name {
 					t.Errorf("got %s, want %s", mout.TVMetadata.Name, tt.Want.TVMetadata.Name)
@@ -53,10 +53,10 @@ func TestTVPreProcessor_identify(t *testing.T) {
 			in := in
 			t.Run(tt.Name+"::"+in, func(t *testing.T) {
 				t.Parallel()
-				min := types.Media{SourcePath: in}
+				min := types.Item{SourcePath: in}
 				mout := p.identify(min)
-				if mout == (tv.TV != tt.Want.Type) {
-					t.Errorf("got %t, want %s", mout, tt.Want.Type)
+				if mout == (tv.TV != tt.Want.MediaType) {
+					t.Errorf("got %t, want %s", mout, tt.Want.MediaType)
 				}
 			})
 		}
@@ -67,9 +67,9 @@ func TestTVPreProcessor_identify(t *testing.T) {
 			in := in
 			t.Run(tt.Name+"::"+in, func(t *testing.T) {
 				t.Parallel()
-				min := types.Media{SourcePath: in}
+				min := types.Item{SourcePath: in}
 				mout := p.identify(min)
-				if mout == (tv.TV != tt.Want.Type) {
+				if mout == (tv.TV != tt.Want.MediaType) {
 					t.Errorf("got %t but shouldn't have", mout)
 				}
 			})

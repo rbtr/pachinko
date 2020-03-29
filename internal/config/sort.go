@@ -13,6 +13,7 @@ import (
 
 	"github.com/mitchellh/mapstructure"
 	"github.com/rbtr/pachinko/internal/pipeline"
+	internalout "github.com/rbtr/pachinko/internal/plugin/output"
 	internalpre "github.com/rbtr/pachinko/internal/plugin/processor/pre"
 	"github.com/rbtr/pachinko/plugin/input"
 	"github.com/rbtr/pachinko/plugin/output"
@@ -61,6 +62,12 @@ func (c *Sort) ConfigurePipeline(pipe *pipeline.Pipeline) error {
 			}
 		}
 	}
+
+	deleter := internalout.NewDeleter(c.DryRun)
+	if err := deleter.Init(c.ctx); err != nil {
+		return err
+	}
+	pipe.WithOutputs(deleter)
 
 	categorizer := internalpre.NewCategorizer()
 	if err := categorizer.Init(c.ctx); err != nil {

@@ -30,24 +30,29 @@ func (*FilePathInput) Init(context.Context) error {
 
 // Consume runs the directory ingestion and pushes the contents of the
 // directory tree in to the pipeline
-func (p *FilePathInput) Consume(sink chan<- types.Media) {
+func (p *FilePathInput) Consume(sink chan<- types.Item) {
 	log.Tracef("started path_input at %s", p.SrcDir)
 	count := 0
 	if err := filepath.Walk(p.SrcDir, func(path string, info os.FileInfo, err error) error {
+		// skip root
+		if path == p.SrcDir {
+			return nil
+		}
 		log.Debugf("path_input: encountered %s", path)
 		if err != nil {
 			log.Error(err)
 			return err
 		}
-		if info.IsDir() {
-			log.Tracef("path_input: skipping %s, not a leaf node", path)
-			return nil
-		}
 		log.Infof("path_input: found file: %s", path)
-		sink <- types.Media{
+		i := types.Item{
 			Identifiers: make(map[string]string),
 			SourcePath:  path,
+			FileType:    types.File,
 		}
+		if info.IsDir() {
+			i.FileType = types.Directory
+		}
+		sink <- i
 		count++
 		return nil
 	}); err != nil {

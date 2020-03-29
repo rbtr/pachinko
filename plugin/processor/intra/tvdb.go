@@ -46,7 +46,7 @@ func (c *TVDbClient) Init(context.Context) error {
 	return nil
 }
 
-func (c *TVDbClient) identify(m types.Media) (*models.Episode, *models.SeriesSearchResult, error) {
+func (c *TVDbClient) identify(m types.Item) (*models.Episode, *models.SeriesSearchResult, error) {
 	cleanName := matcher.ReplaceAllLiteralString(m.TVMetadata.Name, " ")
 	log.Debugf("tvdb_decorator: identifying %s", cleanName)
 
@@ -94,7 +94,7 @@ func (c *TVDbClient) identify(m types.Media) (*models.Episode, *models.SeriesSea
 	return eps[0], series, nil
 }
 
-func (c *TVDbClient) addTVDBMetadata(m types.Media) types.Media {
+func (c *TVDbClient) addTVDBMetadata(m types.Item) types.Item {
 	ep, series, err := c.identify(m)
 	if err != nil || ep == nil || series == nil {
 		log.Errorf("tvdb_decorator: error identifying episode: %s", err)
@@ -109,16 +109,16 @@ func (c *TVDbClient) addTVDBMetadata(m types.Media) types.Media {
 	return m
 }
 
-func (c *TVDbClient) Process(in <-chan types.Media, out chan<- types.Media) {
+func (c *TVDbClient) Process(in <-chan types.Item, out chan<- types.Item) {
 	log.Trace("started tvdb_decorator processor")
 	for m := range in {
 		log.Tracef("tvdb_decorator: received input: %#v", m)
-		if m.Type == tv.TV {
+		if m.MediaType == tv.TV {
 			log.Infof("tvdb_decorator: looking up %s in tvdb", m.SourcePath)
 			<-c.limiter.C // rate limiting on tvdb api calls
 			m = c.addTVDBMetadata(m)
 		} else {
-			log.Debugf("tvdb_decorator: %s type [%s] != TV, skipping", m.SourcePath, m.Type)
+			log.Debugf("tvdb_decorator: %s type [%s] != TV, skipping", m.SourcePath, m.MediaType)
 		}
 		out <- m
 	}

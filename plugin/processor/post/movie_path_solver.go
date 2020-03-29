@@ -29,12 +29,12 @@ func (*MoviePathSolver) Init(context.Context) error {
 	return nil
 }
 
-func (p *MoviePathSolver) Process(in <-chan types.Media, out chan<- types.Media) {
+func (p *MoviePathSolver) Process(in <-chan types.Item, out chan<- types.Item) {
 	log.Trace("started movie_destination processor")
 	for m := range in {
 		log.Tracef("movie_destination: received input %#v", m)
-		if m.Type != movie.Movie {
-			log.Debugf("movie_destination: %s, type [%s] != Movie, skipping", m.SourcePath, m.Type)
+		if m.MediaType != movie.Movie {
+			log.Debugf("movie_destination: %s, type [%s] != Movie, skipping", m.SourcePath, m.MediaType)
 		} else {
 			log.Infof("movie_destination: solving dest for %s", m.SourcePath)
 			if p.MovieDirs {

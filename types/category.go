@@ -17,3 +17,44 @@ const (
 	Unknown  Category = ""
 	Video    Category = "video"
 )
+
+var ArchiveExtensions = []string{
+	"7z",
+	"gz",
+	"gzip",
+	"rar",
+	"tar",
+	"zip",
+}
+
+var ImageExtensions = []string{
+	"bmp",
+	"gif",
+	"heic",
+	"jpeg",
+	"jpg",
+	"png",
+	"tiff",
+}
+
+var SubtitleExtensions = []string{
+	"srt",
+	"sub",
+}
+
+var TextExtensions = []string{
+	"info",
+	"nfo",
+	"txt",
+	"website",
+}
+
+var VideoExtensions = []string{
+	"avi",
+	"divx",
+	"m4v",
+	"mkv",
+	"mov",
+	"mp4",
+	"xvid",
+}

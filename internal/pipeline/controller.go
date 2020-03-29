@@ -36,11 +36,11 @@ func NewPipeline() *Pipeline {
 	}
 }
 
-func (p *Pipeline) runInputs(ctx context.Context, sink chan<- types.Media) {
+func (p *Pipeline) runInputs(ctx context.Context, sink chan<- types.Item) {
 	var wg sync.WaitGroup
 	for _, input := range p.inputs {
 		wg.Add(1)
-		go func(_ context.Context, f func(chan<- types.Media), source chan<- types.Media) {
+		go func(_ context.Context, f func(chan<- types.Item), source chan<- types.Item) {
 			defer wg.Done()
 			f(source)
 		}(ctx, input.Consume, sink)
@@ -49,38 +49,38 @@ func (p *Pipeline) runInputs(ctx context.Context, sink chan<- types.Media) {
 	log.Debug("pipeline: inputs finished")
 }
 
-func (p *Pipeline) runProcessors(ctx context.Context, source, sink chan types.Media) {
+func (p *Pipeline) runProcessors(ctx context.Context, source, sink chan types.Item) {
 	// this noop post-processor attaches the final internal input stream to the
 	// external sink
-	p.processors = processor.AppendFunc(p.processors, func(in <-chan types.Media, _ chan<- types.Media) {
+	p.processors = processor.AppendFunc(p.processors, func(in <-chan types.Item, _ chan<- types.Item) {
 		for m := range in {
 			sink <- m
 		}
 	})
 	var wg sync.WaitGroup
 	in := source
-	out := make(chan types.Media)
+	out := make(chan types.Item)
 	for _, processor := range p.processors {
 		wg.Add(1)
-		go func(_ context.Context, f func(<-chan types.Media, chan<- types.Media), in <-chan types.Media, out chan<- types.Media) {
+		go func(_ context.Context, f func(<-chan types.Item, chan<- types.Item), in <-chan types.Item, out chan<- types.Item) {
 			defer wg.Done()
 			f(in, out)
 			close(out)
 		}(ctx, processor.Process, in, out)
 		in = out
-		out = make(chan types.Media)
+		out = make(chan types.Item)
 	}
 	wg.Wait()
 	log.Debug("pipeline: processors finished")
 }
 
-func (p *Pipeline) runOutputs(ctx context.Context, source chan types.Media) {
-	sinks := []chan<- types.Media{}
+func (p *Pipeline) runOutputs(ctx context.Context, source chan types.Item) {
+	sinks := []chan<- types.Item{}
 	var wg sync.WaitGroup
 	for _, output := range p.outputs {
 		wg.Add(1)
-		out := make(chan types.Media)
-		go func(_ context.Context, f func(<-chan types.Media), in <-chan types.Media) {
+		out := make(chan types.Item)
+		go func(_ context.Context, f func(<-chan types.Item), in <-chan types.Item) {
 			defer wg.Done()
 			f(in)
 		}(ctx, output.Receive, out)
@@ -88,13 +88,13 @@ func (p *Pipeline) runOutputs(ctx context.Context, source chan types.Media) {
 	}
 
 	wg.Add(1)
-	go func(ctx context.Context, in <-chan types.Media, outs []chan<- types.Media) {
+	go func(ctx context.Context, in <-chan types.Item, outs []chan<- types.Item) {
 		var wgOut sync.WaitGroup
 		defer wg.Done()
 		for m := range in {
 			for _, out := range outs {
 				wgOut.Add(1)
-				go func(_ context.Context, i types.Media, o chan<- types.Media) {
+				go func(_ context.Context, i types.Item, o chan<- types.Item) {
 					defer wgOut.Done()
 					o <- i
 				}(ctx, m, out)
@@ -125,11 +125,11 @@ func (p *Pipeline) Run(ctx context.Context) error {
 	log.Debug("running pipeline")
 
 	var wg sync.WaitGroup
-	in := make(chan types.Media, p.Buffer)
-	out := make(chan types.Media, p.Buffer)
+	in := make(chan types.Item, p.Buffer)
+	out := make(chan types.Item, p.Buffer)
 
 	wg.Add(1)
-	go func(ctx context.Context, sink chan types.Media) {
+	go func(ctx context.Context, sink chan types.Item) {
 		log.Trace("pipeline: executing input thread")
 		defer wg.Done()
 		p.runInputs(ctx, sink)
@@ -138,7 +138,7 @@ func (p *Pipeline) Run(ctx context.Context) error {
 	}(ctx, in)
 
 	wg.Add(1)
-	go func(ctx context.Context, source, sink chan types.Media) {
+	go func(ctx context.Context, source, sink chan types.Item) {
 		log.Trace("pipeline: executing processor thread")
 		defer wg.Done()
 		p.runProcessors(ctx, source, sink)
@@ -147,7 +147,7 @@ func (p *Pipeline) Run(ctx context.Context) error {
 	}(ctx, in, out)
 
 	wg.Add(1)
-	go func(ctx context.Context, source chan types.Media) {
+	go func(ctx context.Context, source chan types.Item) {
 		log.Trace("pipeline: executing output thread")
 		defer wg.Done()
 		p.runOutputs(ctx, source)

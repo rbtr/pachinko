@@ -9,7 +9,7 @@ import (
 type Test struct {
 	Name   string
 	Inputs []string
-	Want   types.Media
+	Want   types.Item
 }
 
 var TV []*Test = []*Test{
@@ -31,9 +31,9 @@ var TV []*Test = []*Test{
 			"Mr Robot Season 02 Episode 05",
 			"Mr Robot/Season 02/Episode 05",
 		},
-		types.Media{
-			Category: types.Video,
-			Type:     tv.TV,
+		types.Item{
+			Category:  types.Video,
+			MediaType: tv.TV,
 			TVMetadata: tv.Metadata{
 				Name: "Mr Robot",
 				Episode: tv.Episode{
@@ -50,9 +50,9 @@ var TV []*Test = []*Test{
 		[]string{
 			"/src/Broad City (2014) S01-03 Season 01-03 (1080p HEVC AAC 2.0)/Broad City 03x09 Getting There.mkv",
 		},
-		types.Media{
-			Category: types.Video,
-			Type:     tv.TV,
+		types.Item{
+			Category:  types.Video,
+			MediaType: tv.TV,
 			TVMetadata: tv.Metadata{
 				Name: "Broad City",
 				Episode: tv.Episode{
@@ -69,9 +69,9 @@ var TV []*Test = []*Test{
 		[]string{
 			"/src/Doctor Who 2005 S12E03 1080p HEVC x265/Doctor.Who.2005.S12E03.1080p.HEVC.x265.mkv",
 		},
-		types.Media{
-			Category: types.Video,
-			Type:     tv.TV,
+		types.Item{
+			Category:  types.Video,
+			MediaType: tv.TV,
 			TVMetadata: tv.Metadata{
 				Name:        "Doctor Who",
 				ReleaseYear: 2005,
@@ -89,9 +89,9 @@ var TV []*Test = []*Test{
 		[]string{
 			"/src/Tom Clancy's Jack Ryan S01E01.mkv",
 		},
-		types.Media{
-			Category: types.Video,
-			Type:     tv.TV,
+		types.Item{
+			Category:  types.Video,
+			MediaType: tv.TV,
 			TVMetadata: tv.Metadata{
 				Name: "Tom Clancy's Jack Ryan",
 				Episode: tv.Episode{
@@ -108,9 +108,9 @@ var TV []*Test = []*Test{
 		[]string{
 			"/src/Handmaid's Tale S03E01.mkv",
 		},
-		types.Media{
-			Category: types.Video,
-			Type:     tv.TV,
+		types.Item{
+			Category:  types.Video,
+			MediaType: tv.TV,
 			TVMetadata: tv.Metadata{
 				Name: "Handmaid's Tale",
 				Episode: tv.Episode{
@@ -127,9 +127,9 @@ var TV []*Test = []*Test{
 		[]string{
 			"src/Marvel's Runaways S01E01.mkv",
 		},
-		types.Media{
-			Category: types.Video,
-			Type:     tv.TV,
+		types.Item{
+			Category:  types.Video,
+			MediaType: tv.TV,
 			TVMetadata: tv.Metadata{
 				Name: "Marvel's Runaways",
 				Episode: tv.Episode{
@@ -149,9 +149,9 @@ var Movies []*Test = []*Test{
 		[]string{
 			"/src/Blade Runner 2049 (2017)/Blade Runner 2049.mkv",
 		},
-		types.Media{
-			Category: types.Video,
-			Type:     movie.Movie,
+		types.Item{
+			Category:  types.Video,
+			MediaType: movie.Movie,
 			MovieMetadata: movie.Metadata{
 				Title:       "Blade Runner 2049",
 				ReleaseYear: 2017,
@@ -163,9 +163,9 @@ var Movies []*Test = []*Test{
 		[]string{
 			"/src/Finding Nemo (2003).mkv",
 		},
-		types.Media{
-			Category: types.Video,
-			Type:     movie.Movie,
+		types.Item{
+			Category:  types.Video,
+			MediaType: movie.Movie,
 			MovieMetadata: movie.Metadata{
 				Title:       "Finding Nemo",
 				ReleaseYear: 2003,
@@ -177,9 +177,9 @@ var Movies []*Test = []*Test{
 		[]string{
 			"/src/Frozen 2 (2019) [1080p x265 10bit FS93].mkv",
 		},
-		types.Media{
-			Category: types.Video,
-			Type:     movie.Movie,
+		types.Item{
+			Category:  types.Video,
+			MediaType: movie.Movie,
 			MovieMetadata: movie.Metadata{
 				Title:       "Frozen 2",
 				ReleaseYear: 2019,
@@ -191,9 +191,9 @@ var Movies []*Test = []*Test{
 		[]string{
 			"TRON - Legacy (2010) (1080p BluRay).mkv",
 		},
-		types.Media{
-			Category: types.Video,
-			Type:     movie.Movie,
+		types.Item{
+			Category:  types.Video,
+			MediaType: movie.Movie,
 			MovieMetadata: movie.Metadata{
 				Title:       "TRON Legacy",
 				ReleaseYear: 2010,
