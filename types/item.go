@@ -16,21 +16,30 @@ import (
 	"github.com/rbtr/pachinko/types/metadata/video"
 )
 
-// Media is the container struct for a file flowing through the entire pipeline
-type Media struct {
-	Identifiers     map[string]string
-	SourcePath      string
-	DestinationPath string
+type FileType int
+
+const (
+	Directory FileType = iota
+	File
+)
+
+// Item is the container struct for a file flowing through the entire pipeline
+type Item struct {
 	Category        Category
-	Type            metadata.MediaType
-	VideoMetadata   video.Metadata
-	TVMetadata      tv.Metadata
+	Delete          bool
+	DestinationPath string
+	FileType        FileType
+	Identifiers     map[string]string
+	MediaType       metadata.MediaType
 	MovieMetadata   movie.Metadata
+	SourcePath      string
+	TVMetadata      tv.Metadata
+	VideoMetadata   video.Metadata
 }
 
 // String string TODO
-func (m *Media) String() string {
-	if m.Type == tv.TV {
+func (m *Item) String() string {
+	if m.MediaType == tv.TV {
 		return fmt.Sprintf("%s Season %d Episode %d", m.TVMetadata.Name, m.TVMetadata.Episode.Season.Number, m.TVMetadata.Episode.Number)
 	}
 	return m.SourcePath

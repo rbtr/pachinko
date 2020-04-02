@@ -16,7 +16,6 @@ import (
 	"time"
 
 	"github.com/rbtr/go-trakt"
-	gotrakt "github.com/rbtr/go-trakt"
 )
 
 const (
@@ -68,7 +67,7 @@ func WriteAuthFile(path string, auth *Auth) error {
 }
 
 type Trakt struct {
-	*gotrakt.Client
+	*trakt.Client
 	auth *Auth
 }
 
@@ -79,7 +78,7 @@ func NewTrakt(auth *Auth) (*Trakt, error) {
 	if auth.ClientSecret == "" {
 		auth.ClientSecret = ClientSecret
 	}
-	client, err := gotrakt.NewClient(nil, auth.ClientID, auth.ClientSecret)
+	client, err := trakt.NewClient(nil, auth.ClientID, auth.ClientSecret)
 	if auth.AccessToken != "" {
 		client.SetAuthorization(auth.AccessToken)
 	}

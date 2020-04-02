@@ -30,12 +30,12 @@ func (*TVPathSolver) Init(context.Context) error {
 	return nil
 }
 
-func (p *TVPathSolver) Process(in <-chan types.Media, out chan<- types.Media) {
+func (p *TVPathSolver) Process(in <-chan types.Item, out chan<- types.Item) {
 	log.Trace("started tv_destination processor")
 	for m := range in {
 		log.Tracef("tv_destination: received input %#v", m)
-		if m.Type != tv.TV {
-			log.Debugf("tv_destination: %s, type [%s] != TV, skipping", m.SourcePath, m.Type)
+		if m.MediaType != tv.TV {
+			log.Debugf("tv_destination: %s, type [%s] != TV, skipping", m.SourcePath, m.MediaType)
 		} else {
 			log.Infof("tv_destination: solving dest for %s", m.SourcePath)
 			filename := ""

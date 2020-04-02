@@ -84,7 +84,7 @@ func (mv *FilepathMover) move(src, dest string) error {
 	return nil
 }
 
-func (mv *FilepathMover) moveMedia(m types.Media) error {
+func (mv *FilepathMover) moveMedia(m types.Item) error {
 	if m.DestinationPath == "" {
 		return errors.New("move_output: no dest path")
 	}
@@ -113,7 +113,7 @@ func (mv *FilepathMover) moveMedia(m types.Media) error {
 }
 
 // Receive implements the Plugin interface on the FilepathMover
-func (mv *FilepathMover) Receive(c <-chan types.Media) {
+func (mv *FilepathMover) Receive(c <-chan types.Item) {
 	log.Trace("started mover output")
 	for m := range c {
 		log.Tracef("mover_output: received_input %#v", m)

@@ -45,7 +45,7 @@ func (t *TraktCollector) Init(ctx context.Context) error {
 	return internaltrakt.WriteAuthFile(t.Authfile, auth)
 }
 
-func (t *TraktCollector) collectTV(m types.Media) error {
+func (t *TraktCollector) collectTV(m types.Item) error {
 	tvdbID, err := strconv.Atoi(m.Identifiers["tvdb"])
 	log.Debugf("trakt_collector: collecting by tvdb id: %d", tvdbID)
 	if err != nil {
@@ -67,7 +67,7 @@ func (t *TraktCollector) collectTV(m types.Media) error {
 	return nil
 }
 
-func (t *TraktCollector) collectMovie(m types.Media) error {
+func (t *TraktCollector) collectMovie(m types.Item) error {
 	tmdbID, err := strconv.Atoi(m.Identifiers["tmdb"])
 	log.Debugf("trakt_collector: collecting by tmdb id: %d", tmdbID)
 	if err != nil {
@@ -89,17 +89,17 @@ func (t *TraktCollector) collectMovie(m types.Media) error {
 	return nil
 }
 
-func (t *TraktCollector) Receive(in <-chan types.Media) {
+func (t *TraktCollector) Receive(in <-chan types.Item) {
 	log.Trace("started trakt_collector output")
 	for m := range in {
 		log.Tracef("trakt_collector: received_input %#v", m)
-		if m.Type == tv.TV {
+		if m.MediaType == tv.TV {
 			log.Infof("trakt_collector: collecting tv")
 			if err := t.collectTV(m); err != nil {
 				log.Error(err)
 			}
 		}
-		if m.Type == movie.Movie {
+		if m.MediaType == movie.Movie {
 			log.Infof("trakt_collector: collecting movie")
 			if err := t.collectMovie(m); err != nil {
 				log.Error(err)

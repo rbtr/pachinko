@@ -41,7 +41,7 @@ func (p *MoviePreProcessor) Init(context.Context) error {
 }
 
 // extract uses the Movie regexp to extract metadata from the input
-func (p *MoviePreProcessor) extractMetadata(m types.Media) types.Media {
+func (p *MoviePreProcessor) extractMetadata(m types.Item) types.Item {
 	var title, year string
 	for _, matcher := range p.matchers {
 		subs := matcher.FindAllStringSubmatch(m.SourcePath, -1)
@@ -71,7 +71,7 @@ func (p *MoviePreProcessor) extractMetadata(m types.Media) types.Media {
 }
 
 // identify tests if the input is matched by any of the Movie regexp
-func (p *MoviePreProcessor) identify(m types.Media) bool {
+func (p *MoviePreProcessor) identify(m types.Item) bool {
 	for _, matcher := range p.matchers {
 		if matcher.MatchString(m.SourcePath) {
 			log.Tracef("movie_path_metadata: regexp %s matched %s", matcher, m.SourcePath)
@@ -83,7 +83,7 @@ func (p *MoviePreProcessor) identify(m types.Media) bool {
 	return false
 }
 
-func (p *MoviePreProcessor) Process(in <-chan types.Media, out chan<- types.Media) {
+func (p *MoviePreProcessor) Process(in <-chan types.Item, out chan<- types.Item) {
 	log.Trace("started movie_path_metadata processor")
 	for m := range in {
 		log.Tracef("movie_path_metadata: received input: %#v", m)
@@ -91,16 +91,16 @@ func (p *MoviePreProcessor) Process(in <-chan types.Media, out chan<- types.Medi
 			log.Infof("movie_path_metadata: %s category == video, testing for movie", m.SourcePath)
 			if p.identify(m) {
 				log.Infof("movie_path_metadata: %s is movie", m.SourcePath)
-				m.Type = movie.Movie
+				m.MediaType = movie.Movie
 			}
 		} else {
 			log.Debugf("movie_path_metadata: %s category [%s] != video, skipping", m.SourcePath, m.Category)
 		}
-		if m.Type == movie.Movie {
+		if m.MediaType == movie.Movie {
 			log.Infof("movie_path_metadata: extracting metadata for %v", m)
 			m = p.extractMetadata(m)
 		} else {
-			log.Debugf("movie_path_metadata: %s type [%s] != Movie, skipping", m.SourcePath, m.Type)
+			log.Debugf("movie_path_metadata: %s type [%s] != Movie, skipping", m.SourcePath, m.MediaType)
 		}
 		out <- m
 	}

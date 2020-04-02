@@ -22,7 +22,7 @@ import (
 
 // input input
 type Input interface {
-	Consume(chan<- types.Media)
+	Consume(chan<- types.Item)
 	Init(context.Context) error
 }
 

@@ -32,6 +32,7 @@ processors:
     name: tv-path-solver
     season-dirs: true
     tv-prefix: tv
+  - name: deleter
   pre:
   - name: movie
     sanitize-name: true

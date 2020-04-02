@@ -19,42 +19,11 @@ import (
 )
 
 var defaultCategoryFileExtensions = map[types.Category][]string{
-	types.Archive: {
-		"7z",
-		"gz",
-		"gzip",
-		"rar",
-		"tar",
-		"zip",
-	},
-	types.Image: {
-		"bmp",
-		"gif",
-		"heic",
-		"jpeg",
-		"jpg",
-		"png",
-		"tiff",
-	},
-	types.Subtitle: {
-		"srt",
-		"sub",
-	},
-	types.Text: {
-		"info",
-		"nfo",
-		"txt",
-		"website",
-	},
-	types.Video: {
-		"avi",
-		"divx",
-		"m4v",
-		"mkv",
-		"mov",
-		"mp4",
-		"xvid",
-	},
+	types.Archive:  types.ArchiveExtensions,
+	types.Image:    types.ImageExtensions,
+	types.Subtitle: types.SubtitleExtensions,
+	types.Text:     types.TextExtensions,
+	types.Video:    types.VideoExtensions,
 }
 
 type FileCategorizer struct {
@@ -78,7 +47,12 @@ func (cat *FileCategorizer) Init(context.Context) error {
 	return nil
 }
 
-func (cat *FileCategorizer) identify(m types.Media) types.Media {
+func (cat *FileCategorizer) identify(m types.Item) types.Item {
+	// don't attempt to categorize directories
+	if m.FileType == types.Directory {
+		return m
+	}
+
 	ext := path.Ext(m.SourcePath)
 
 	category := types.Unknown
@@ -96,7 +70,7 @@ func (cat *FileCategorizer) identify(m types.Media) types.Media {
 	return m
 }
 
-func (cat *FileCategorizer) Process(in <-chan types.Media, out chan<- types.Media) {
+func (cat *FileCategorizer) Process(in <-chan types.Item, out chan<- types.Item) {
 	log.Trace("started categorizer")
 	for m := range in {
 		log.Debugf("categorizer: received input: %v", m)

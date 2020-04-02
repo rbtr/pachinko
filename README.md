@@ -65,9 +65,6 @@ pachinko currently supports these outputs:
 - [trakt collector (`trakt_collector`)](docs/plugins/outputs/trakt.md)
 
 #### processors
-pachinko has the following required processors:
-- categorizer (internal) 
-
 pachinko has the following optional processors:
 - tv identifier (pre-tv)
 - movie identifier (pre-movie)
@@ -75,6 +72,7 @@ pachinko has the following optional processors:
 - tmdb (intra-tmdb)
 - tv path solver (post-tv_path_solver)
 - movie path solver (post-movie_path_solver)
+- file deleter (deleter)
 
 ### how to run it
 pachinko is distributed as a container and as a cross-platform binary.  
