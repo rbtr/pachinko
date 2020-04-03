@@ -43,7 +43,7 @@ additionally there are subtypes of `processor` plugins:
 - (intra)processor - the main working processors, where external datasources may be queried to enrich the datastream and significant modifications made. 
 - postprocessor - last chance to modify the datastream before it is sent to outputs, but after the rich data has been added. the postprocessors make final modifications that shouldn't be the responsibility of the intraprocessors but may depend on the data enrichments that those have added.
 
-they subtypes exist mainly to allow ordering of plugin flow. 
+the subtypes exist mainly to allow ordering of plugin flow. 
 
 #### datatypes
 pachinko currently supports these data types: 

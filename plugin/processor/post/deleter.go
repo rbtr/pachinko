@@ -84,7 +84,9 @@ func init() {
 	processor.Register(processor.Post, "deleter", func() processor.Processor {
 		var defaultExtensions = []string{}
 		defaultExtensions = append(defaultExtensions, types.ArchiveExtensions...)
+		defaultExtensions = append(defaultExtensions, types.ExecutableExtensions...)
 		defaultExtensions = append(defaultExtensions, types.ImageExtensions...)
+		defaultExtensions = append(defaultExtensions, types.SubtitleExtensions...)
 		defaultExtensions = append(defaultExtensions, types.TextExtensions...)
 		return &Deleter{
 			Extensions:     defaultExtensions,

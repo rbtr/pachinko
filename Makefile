@@ -25,10 +25,14 @@ build: ## build
 		-o bin/$(MODULE) ./
 
 container: clean build ## container
-	buildah bud -t rbtr/pachinko:latest .
+	@buildah bud -t rbtr/pachinko:latest .
+	@podman tag rbtr/pachinko:latest rbtr/pachinko:$(VERSION)
+	@podman push rbtr/pachinko:latest
+	@podman push rbtr/pachinko:$(VERSION)
 
 clean: ## clean workspace
 	@rm -rf ./bin ./$(MODULE)
 
 help: ## print this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+

@@ -27,6 +27,10 @@ var ArchiveExtensions = []string{
 	"zip",
 }
 
+var ExecutableExtensions = []string{
+	"exe",
+}
+
 var ImageExtensions = []string{
 	"bmp",
 	"gif",
