@@ -8,7 +8,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 package output
 
 import (
-	"container/list"
+	"container/heap"
 	"context"
 	"os"
 
@@ -29,21 +29,21 @@ func (*Deleter) Init(context.Context) error {
 // Receive implements the Plugin interface on the Deleter
 func (d *Deleter) Receive(c <-chan types.Item) {
 	log.Trace("started deleter output")
-	q := list.New()
+	h := &stringHeap{}
 	for m := range c {
 		log.Infof("deleter_output: received_input %#v", m)
 		if m.Delete {
 			log.Infof("deleter_output: queueing %s", m.SourcePath)
-			q.PushBack(m)
+			heap.Push(h, m.SourcePath)
 		}
 	}
-	for e := q.Front(); e != nil; e = e.Next() {
-		i := (e.Value).(types.Item)
-		log.Infof("deleter_output: deleting %s", i.SourcePath)
+	for h.Len() > 0 {
+		path := heap.Pop(h).(string)
+		log.Infof("deleter_output: deleting %s", path)
 		if d.DryRun {
 			continue
 		}
-		if err := os.Remove(i.SourcePath); err != nil {
+		if err := os.Remove(path); err != nil {
 			log.Error(err)
 		}
 	}
@@ -51,4 +51,22 @@ func (d *Deleter) Receive(c <-chan types.Item) {
 
 func NewDeleter(dryRun bool) output.Output {
 	return &Deleter{DryRun: dryRun}
+}
+
+type stringHeap []string
+
+func (h stringHeap) Len() int           { return len(h) }
+func (h stringHeap) Less(i, j int) bool { return len(h[i]) > len(h[j]) }
+func (h stringHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+
+func (h *stringHeap) Push(x interface{}) {
+	*h = append(*h, x.(string))
+}
+
+func (h *stringHeap) Pop() interface{} {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[0 : n-1]
+	return x
 }
