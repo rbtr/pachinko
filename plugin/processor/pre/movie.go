@@ -20,7 +20,7 @@ import (
 )
 
 var defaultMovieMatchers = []string{
-	`(?i)\b([\s\w.-]*)[\s.\/-]+[\s.\/-]?(?:[\s\(.\/-]?(\d{4})[\s\).\/-]?)(?:\s*[\(\[].*[\)\]])?(?:\/|.[A-Za-z]{3})`, // matches "Name (YEAR)."
+	`(?i)\b([\s\w.-]*)[\s.-]?(?:[\s\(.-]?(\d{4})[\s\).-]?)(?:\s*[\(\[].*[\)\]])?(?:\/|.[A-Za-z]{3})`, // matches "Name (YEAR)."
 }
 
 type MoviePreProcessor struct {

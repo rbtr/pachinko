@@ -145,9 +145,10 @@ var TV []*Test = []*Test{
 
 var Movies []*Test = []*Test{
 	{
-		"year as title",
+		"year in title",
 		[]string{
 			"/src/Blade Runner 2049 (2017)/Blade Runner 2049.mkv",
+			"/src/Blade Runner 2049 (2017).mkv",
 		},
 		types.Item{
 			Category:  types.Video,
@@ -155,6 +156,20 @@ var Movies []*Test = []*Test{
 			MovieMetadata: movie.Metadata{
 				Title:       "Blade Runner 2049",
 				ReleaseYear: 2017,
+			},
+		},
+	},
+	{
+		"year as title",
+		[]string{
+			"/movies/1917 (2020).mkv",
+		},
+		types.Item{
+			Category:  types.Video,
+			MediaType: movie.Movie,
+			MovieMetadata: movie.Metadata{
+				Title:       "1917",
+				ReleaseYear: 2020,
 			},
 		},
 	},
