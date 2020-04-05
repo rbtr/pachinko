@@ -22,16 +22,18 @@ import (
 // some options like creating dirs or overwriting existing dests
 type FilepathMover struct {
 	CreateDirs bool `mapstructure:"create-dirs"`
-	DryRun     bool `mapstructure:"dry-run"`
 	Overwrite  bool `mapstructure:"overwrite"`
+
+	dryRun bool
 }
 
-func (*FilepathMover) Init(context.Context) error {
+func (mv *FilepathMover) Init(ctx context.Context, cfg Config) error {
+	mv.dryRun = cfg.DryRun
 	return nil
 }
 
 func (mv *FilepathMover) mkdir(dir string) error {
-	if mv.DryRun {
+	if mv.dryRun {
 		log.Infof("move_output: (DRY_RUN) mkdir %s", dir)
 		return nil
 	}
@@ -44,7 +46,7 @@ func (mv *FilepathMover) mkdir(dir string) error {
 // if src and dest are on different volumes, it will error with a cross-device
 // link message
 func (mv *FilepathMover) rename(src, dest string) error {
-	if mv.DryRun {
+	if mv.dryRun {
 		log.Infof("move_output: (DRY_RUN) rename %s -> %s", src, dest)
 		return nil
 	}
@@ -56,7 +58,7 @@ func (mv *FilepathMover) rename(src, dest string) error {
 // should only be used to move data between volumes since rename is always
 // faster within the filesystem boundary
 func (mv *FilepathMover) move(src, dest string) error {
-	if mv.DryRun {
+	if mv.dryRun {
 		log.Infof("move_output: (DRY_RUN) copy %s -> %s", src, dest)
 		return nil
 	}
@@ -129,8 +131,8 @@ func init() {
 	Register("path-mover", func() Output {
 		return &FilepathMover{
 			CreateDirs: true,
-			DryRun:     true,
 			Overwrite:  false,
+			dryRun:     true,
 		}
 	})
 }

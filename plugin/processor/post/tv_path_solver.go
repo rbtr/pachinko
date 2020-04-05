@@ -80,7 +80,7 @@ func (p *TVPathSolver) Process(in <-chan types.Item, out chan<- types.Item) {
 func init() {
 	processor.Register(processor.Post, "tv-path-solver", func() processor.Processor {
 		return &TVPathSolver{
-			DestDir:      "dest",
+			DestDir:      "/dest",
 			EpisodeNames: false,
 			TVPrefix:     "tv",
 			SeasonDirs:   true,

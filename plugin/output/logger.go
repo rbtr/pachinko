@@ -17,7 +17,7 @@ import (
 // Logger is a noop logging output used for dry-runs and testing
 type Logger struct{}
 
-func (*Logger) Init(context.Context) error {
+func (*Logger) Init(context.Context, Config) error {
 	return nil
 }
 

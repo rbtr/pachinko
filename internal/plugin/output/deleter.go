@@ -19,10 +19,12 @@ import (
 
 // Deleter is a deleter output used to clean up chaff
 type Deleter struct {
-	DryRun bool
+	dryRun bool
 }
 
-func (*Deleter) Init(context.Context) error {
+// Init noop
+func (d *Deleter) Init(ctx context.Context, cfg output.Config) error {
+	d.dryRun = cfg.DryRun
 	return nil
 }
 
@@ -31,7 +33,7 @@ func (d *Deleter) Receive(c <-chan types.Item) {
 	log.Trace("started deleter output")
 	h := &stringHeap{}
 	for m := range c {
-		log.Infof("deleter_output: received_input %#v", m)
+		log.Debugf("deleter_output: received_input %#v", m)
 		if m.Delete {
 			log.Infof("deleter_output: queueing %s", m.SourcePath)
 			heap.Push(h, m.SourcePath)
@@ -40,17 +42,13 @@ func (d *Deleter) Receive(c <-chan types.Item) {
 	for h.Len() > 0 {
 		path := heap.Pop(h).(string)
 		log.Infof("deleter_output: deleting %s", path)
-		if d.DryRun {
+		if d.dryRun {
 			continue
 		}
 		if err := os.Remove(path); err != nil {
 			log.Error(err)
 		}
 	}
-}
-
-func NewDeleter(dryRun bool) output.Output {
-	return &Deleter{DryRun: dryRun}
 }
 
 type stringHeap []string

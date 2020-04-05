@@ -59,7 +59,7 @@ func (p *MoviePathSolver) Process(in <-chan types.Item, out chan<- types.Item) {
 func init() {
 	processor.Register(processor.Post, "movie-path-solver", func() processor.Processor {
 		return &MoviePathSolver{
-			DestDir:      "dest",
+			DestDir:      "/dest",
 			MovieDirs:    true,
 			MoviesPrefix: "movies",
 			OutputFormat: "not-implemented",
