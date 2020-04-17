@@ -64,7 +64,7 @@ func (p *FilePathInput) Consume(sink chan<- types.Item) {
 func init() {
 	Register("filepath", func() Input {
 		return &FilePathInput{
-			SrcDir: "./src",
+			SrcDir: "/src",
 		}
 	})
 }

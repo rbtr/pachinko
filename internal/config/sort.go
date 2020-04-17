@@ -48,6 +48,10 @@ func (c *Sort) ConfigurePipeline(pipe *pipeline.Pipeline) error {
 		}
 	}
 
+	ocfg := output.Config{
+		DryRun: c.DryRun,
+	}
+
 	for _, p := range c.Outputs {
 		if name, ok := p["name"]; ok {
 			if initializer, ok := output.Registry[name.(string)]; ok {
@@ -55,7 +59,7 @@ func (c *Sort) ConfigurePipeline(pipe *pipeline.Pipeline) error {
 				if err := mapstructure.Decode(p, plugin); err != nil {
 					return err
 				}
-				if err := plugin.Init(c.ctx); err != nil {
+				if err := plugin.Init(c.ctx, ocfg); err != nil {
 					return err
 				}
 				pipe.WithOutputs(plugin)
@@ -63,8 +67,8 @@ func (c *Sort) ConfigurePipeline(pipe *pipeline.Pipeline) error {
 		}
 	}
 
-	deleter := internalout.NewDeleter(c.DryRun)
-	if err := deleter.Init(c.ctx); err != nil {
+	deleter := &internalout.Deleter{}
+	if err := deleter.Init(c.ctx, ocfg); err != nil {
 		return err
 	}
 	pipe.WithOutputs(deleter)

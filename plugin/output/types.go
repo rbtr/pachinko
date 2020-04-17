@@ -20,10 +20,15 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// Config is common/general output tunables
+type Config struct {
+	DryRun bool
+}
+
 // Output is plugin interface to handle the result
 type Output interface {
 	Receive(<-chan types.Item)
-	Init(context.Context) error
+	Init(context.Context, Config) error
 }
 
 var Registry map[string](func() Output) = map[string](func() Output){}

@@ -30,7 +30,7 @@ type TraktCollector struct {
 // Init reads the authfile, creates a client, refreshes the
 // credentials, and writes them back to the authfile. Any failures
 // will return an error.
-func (t *TraktCollector) Init(ctx context.Context) error {
+func (t *TraktCollector) Init(ctx context.Context, cfg Config) error {
 	auth, err := internaltrakt.ReadAuthFile(t.Authfile)
 	if err != nil {
 		return err

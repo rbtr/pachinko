@@ -8,7 +8,6 @@ log-level: "info"
 outputs:
 - name: stdout
 - create-dirs: true
-  dry-run: false
   name: path-mover
   overwrite: false
 - authfile: "/etc/pachinko/trakt"
