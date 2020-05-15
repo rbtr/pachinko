@@ -215,6 +215,20 @@ var Movies []*Test = []*Test{
 			},
 		},
 	},
+	{
+		"special character :",
+		[]string{
+			"3:10 To Yuma (2007).mkv",
+		},
+		types.Item{
+			Category:  types.Video,
+			MediaType: movie.Movie,
+			MovieMetadata: movie.Metadata{
+				Title:       "3:10 To Yuma",
+				ReleaseYear: 2007,
+			},
+		},
+	},
 }
 
 var NotTV []*Test = []*Test{}
