@@ -1,9 +1,10 @@
 SHELL := /bin/bash
+ORG = rbtr
 MODULE = pachinko
 
 VERSION = $(shell if [[ -z $$(git status --porcelain) ]] && [[ -n $$(git tag -l --points-at HEAD) ]]; then echo $$(git tag -l --points-at HEAD); else echo $$(git rev-parse --short HEAD); fi)
 
-LDFLAGS = -ldflags "-s -w -X github.com/rbtr/pachinko/cmd.Version=$(VERSION)"
+LDFLAGS = -ldflags "-s -w -X github.com/$(ORG)/$(MODULER)/cmd.Version=$(VERSION)"
 GCFLAGS = -gcflags "all=-trimpath=$(PWD)" -asmflags "all=-trimpath=$(PWD)"
 GO_BUILD_ENV_VARS := CGO_ENABLED=0 GOOS=linux GOARCH=amd64
 
@@ -25,10 +26,10 @@ build: ## build
 		-o bin/$(MODULE) ./
 
 container: clean build ## container
-	@buildah bud -t rbtr/pachinko:latest .
-	@podman tag rbtr/pachinko:latest rbtr/pachinko:$(VERSION)
-	@podman push rbtr/pachinko:latest
-	@podman push rbtr/pachinko:$(VERSION)
+	@buildah bud -t $(ORG)/$(MODULE):latest .
+	@podman tag $(ORG)/$(MODULE):latest $(ORG)/$(MODULE):$(VERSION)
+	@podman push $(ORG)/$(MODULE):latest
+	@podman push $(ORG)/$(MODULE):$(VERSION)
 
 clean: ## clean workspace
 	@rm -rf ./bin ./$(MODULE)

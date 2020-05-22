@@ -18,6 +18,8 @@ created by @rbtr
 [![Docker](https://img.shields.io/docker/pulls/rbtr/pachinko)](https://hub.docker.com/r/rbtr/pachinko)
 [![License](https://img.shields.io/github/license/rbtr/pachinko)](/LICENSE)
 
+> #### Updates!
+> pachinko is now part of the GitHub Sponsors program! If you enjoy it and want to support my work, please [check out my sponsor page](https://github.com/sponsors/rbtr) or click on the "💖 Sponsor" button up above!
 
 ### what it is
 pachinko is a media sorter. it integrates with the tvdb and the moviedb to, given a directory of reasonably named mix media, organize that media into a clean hierarchal directory structure ideal for use in media servers like plex, kodi/xbmc, etc.
