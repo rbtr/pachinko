@@ -23,7 +23,7 @@ const (
 	File
 )
 
-// Item is the container struct for a file flowing through the entire pipeline
+// Item is the container struct for a file flowing through the entire pipeline.
 type Item struct {
 	Category        Category
 	Delete          bool
@@ -37,7 +37,7 @@ type Item struct {
 	VideoMetadata   video.Metadata
 }
 
-// String string TODO
+// String formats the Item struct.
 func (m *Item) String() string {
 	if m.MediaType == tv.TV {
 		return fmt.Sprintf("%s Season %d Episode %d", m.TVMetadata.Name, m.TVMetadata.Episode.Season.Number, m.TVMetadata.Episode.Number)

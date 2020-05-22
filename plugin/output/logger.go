@@ -14,14 +14,14 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// Logger is a noop logging output used for dry-runs and testing
+// Logger is a noop logging output used for dry-runs and testing.
 type Logger struct{}
 
 func (*Logger) Init(context.Context, Config) error {
 	return nil
 }
 
-// Receive implements the Plugin interface on the Logger
+// Receive implements the Plugin interface on the Logger.
 func (stdr *Logger) Receive(c <-chan types.Item) {
 	log.Trace("started stdout output")
 	for m := range c {

@@ -40,7 +40,7 @@ func (p *MoviePreProcessor) Init(context.Context) error {
 	return nil
 }
 
-// extract uses the Movie regexp to extract metadata from the input
+// extract uses the Movie regexp to extract metadata from the input.
 func (p *MoviePreProcessor) extractMetadata(m types.Item) types.Item {
 	var title, year string
 	for _, matcher := range p.matchers {
@@ -70,7 +70,7 @@ func (p *MoviePreProcessor) extractMetadata(m types.Item) types.Item {
 	return m
 }
 
-// identify tests if the input is matched by any of the Movie regexp
+// identify tests if the input is matched by any of the Movie regexp.
 func (p *MoviePreProcessor) identify(m types.Item) bool {
 	for _, matcher := range p.matchers {
 		if matcher.MatchString(m.SourcePath) {

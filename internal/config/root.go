@@ -38,7 +38,7 @@ func (c *Root) configLogger() {
 	}
 }
 
-// Validate validate
+// Validate validate.
 func (c *Root) Validate() error {
 	c.configLogger()
 	log.Debugf("loaded config: %+v", *c)

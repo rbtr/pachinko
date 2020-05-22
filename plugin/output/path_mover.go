@@ -19,7 +19,7 @@ import (
 )
 
 // FilepathMover is a file mover, it will move files from src to dest with
-// some options like creating dirs or overwriting existing dests
+// some options like creating dirs or overwriting existing dests.
 type FilepathMover struct {
 	CreateDirs bool `mapstructure:"create-dirs"`
 	Overwrite  bool `mapstructure:"overwrite"`
@@ -40,11 +40,11 @@ func (mv *FilepathMover) mkdir(dir string) error {
 	return os.MkdirAll(dir, os.ModePerm)
 }
 
-// rename attempts to rename the file
+// rename attempts to rename the file:
 // if the source and dest are on the same volume, this is preferred - it's fast
 // and atomic and handled by the filesystem
 // if src and dest are on different volumes, it will error with a cross-device
-// link message
+// link message.
 func (mv *FilepathMover) rename(src, dest string) error {
 	if mv.dryRun {
 		log.Infof("move_output: (DRY_RUN) rename %s -> %s", src, dest)
@@ -53,10 +53,10 @@ func (mv *FilepathMover) rename(src, dest string) error {
 	return os.Rename(src, dest)
 }
 
-// move copies the file from src to dest
+// move copies the file from src to dest:
 // this is slow as it actually copies the bits over from src to dest
 // should only be used to move data between volumes since rename is always
-// faster within the filesystem boundary
+// faster within the filesystem boundary.
 func (mv *FilepathMover) move(src, dest string) error {
 	if mv.dryRun {
 		log.Infof("move_output: (DRY_RUN) copy %s -> %s", src, dest)
@@ -114,7 +114,7 @@ func (mv *FilepathMover) moveMedia(m types.Item) error {
 	return nil
 }
 
-// Receive implements the Plugin interface on the FilepathMover
+// Receive implements the Plugin interface on the FilepathMover.
 func (mv *FilepathMover) Receive(c <-chan types.Item) {
 	log.Trace("started mover output")
 	for m := range c {

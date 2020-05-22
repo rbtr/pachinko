@@ -20,7 +20,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// Client TODO
+// Client TODO.
 type TMDbClient struct {
 	APIKey string `mapstructure:"api-key"`
 
@@ -35,7 +35,7 @@ func (c *TMDbClient) Init(context.Context) error {
 	return nil
 }
 
-// identify returns the ID of best match movie search result, or an error
+// identify returns the ID of best match movie search result, or an error.
 func (c *TMDbClient) identify(m types.Item) (api.MovieDetails, error) {
 	opts := map[string]string{}
 	if m.MovieMetadata.ReleaseYear > 0 {

@@ -111,7 +111,7 @@ func NewSort(ctx context.Context) *Sort {
 	return cfg
 }
 
-// LoadConfig loadconfig
+// LoadConfig loadconfig.
 func LoadSort(ctx context.Context) (*Sort, error) {
 	cfg := NewSort(ctx)
 	viper.SetEnvKeyReplacer(strings.NewReplacer("_", "-"))

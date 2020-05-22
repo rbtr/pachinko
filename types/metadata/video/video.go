@@ -13,31 +13,31 @@ import (
 	"github.com/rbtr/pachinko/types/metadata"
 )
 
-// Video video
+// Video defines the Video category enum.
 const Video metadata.MediaCategory = "video"
 
-// AudioChannels audiochannels
+// AudioChannels contains video metadata.
 type AudioChannels struct {
 	FullRange    int
 	LimitedRange int
 }
 
-// String string
+// String formats the AudioChannels struct.
 func (audio *AudioChannels) String() string {
 	return fmt.Sprintf("%d.%d", audio.FullRange, audio.LimitedRange)
 }
 
-// Resolution resolution
+// Resolution contains video metadata.
 type Resolution struct {
 	Width, Height int
 }
 
-// String string
+// String formats the Resolution struct.
 func (rez *Resolution) String() string {
 	return fmt.Sprintf("%dx%d", rez.Width, rez.Height)
 }
 
-// Metadata metadata
+// Metadata contains Video metadata.
 type Metadata struct {
 	Resolution    Resolution
 	AudioChannels AudioChannels

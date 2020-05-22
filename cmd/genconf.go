@@ -20,7 +20,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// genconf represents the config command
+// genconf represents the config command.
 var genconf = &cobra.Command{
 	Use:   "genconf",
 	Short: "Generate pachinko configs",

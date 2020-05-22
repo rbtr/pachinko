@@ -15,7 +15,7 @@ import (
 
 var Version string
 
-// version command
+// version command.
 var version = &cobra.Command{
 	Use:   "version",
 	Short: "the pachinko version",

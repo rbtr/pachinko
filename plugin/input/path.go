@@ -17,19 +17,19 @@ import (
 )
 
 // FilePathInput walks a directory [src-dir], pushing everything in
-// in that directory tree in to the pipeline
+// in that directory tree in to the pipeline.
 type FilePathInput struct {
 	// SrcDir the directory to ingest
 	SrcDir string `mapstructure:"src-dir"`
 }
 
-// Init noop
+// Init noop.
 func (*FilePathInput) Init(context.Context) error {
 	return nil
 }
 
 // Consume runs the directory ingestion and pushes the contents of the
-// directory tree in to the pipeline
+// directory tree in to the pipeline.
 func (p *FilePathInput) Consume(sink chan<- types.Item) {
 	log.Tracef("started path_input at %s", p.SrcDir)
 	count := 0

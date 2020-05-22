@@ -17,18 +17,18 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// Deleter is a deleter output used to clean up chaff
+// Deleter is a deleter output used to clean up chaff.
 type Deleter struct {
 	dryRun bool
 }
 
-// Init noop
+// Init init.
 func (d *Deleter) Init(ctx context.Context, cfg output.Config) error {
 	d.dryRun = cfg.DryRun
 	return nil
 }
 
-// Receive implements the Plugin interface on the Deleter
+// Receive implements the Plugin interface on the Deleter.
 func (d *Deleter) Receive(c <-chan types.Item) {
 	log.Trace("started deleter output")
 	h := &stringHeap{}

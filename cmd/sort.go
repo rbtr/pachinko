@@ -14,7 +14,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// sort represents the sort command
+// sort represents the sort command.
 var sort = &cobra.Command{
 	Use:   "sort",
 	Short: "Run the sorting pipeline.",

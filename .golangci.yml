@@ -4,12 +4,14 @@ run:
 linters:
   enable-all: true
   disable:
-  - wsl
-  - lll
   - funlen
-  - godox
-  - gomnd
-  - gocognit
   - gochecknoglobals
   - gochecknoinits
+  - gocognit
+  - godox
+  - goerr113
+  - gomnd
+  - lll
   - maligned
+  - nestif
+  - wsl

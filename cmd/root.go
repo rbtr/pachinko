@@ -26,7 +26,7 @@ import (
 var cfgFile string
 var rootCtx context.Context
 
-// root represents the base command when called without any subcommands
+// root represents the base command when called without any subcommands.
 var root = &cobra.Command{
 	Use: "pachinko",
 	Long: `

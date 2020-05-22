@@ -20,7 +20,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// input input
+// Input defines the contract for Input pipeline plugins.
 type Input interface {
 	Consume(chan<- types.Item)
 	Init(context.Context) error

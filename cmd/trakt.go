@@ -17,7 +17,7 @@ import (
 
 var traktFile string
 
-// trakt represents the config command
+// trakt represents the trakt connect command.
 var trakt = &cobra.Command{
 	Use:   "trakt",
 	Short: "Connect to Trakt",

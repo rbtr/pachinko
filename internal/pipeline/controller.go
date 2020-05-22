@@ -22,7 +22,7 @@ type Config struct {
 	Buffer int `mapstructure:"buffer"`
 }
 
-// Pipeline pipeline
+// Pipeline pipeline.
 type Pipeline struct {
 	Config
 	inputs     []input.Input

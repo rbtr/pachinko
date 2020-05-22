@@ -44,7 +44,7 @@ func (p *TVPreProcessor) Init(context.Context) error {
 	return nil
 }
 
-// extract uses the TV regexp to extract metadata from the input
+// extract uses the TV regexp to extract metadata from the input.
 func (p *TVPreProcessor) extractMetadata(m types.Item) types.Item {
 	var show, year, season, episode string
 	for _, matcher := range p.matchers {
@@ -84,7 +84,7 @@ func (p *TVPreProcessor) extractMetadata(m types.Item) types.Item {
 	return m
 }
 
-// identify tests if the input is matched by any of the TV regexp
+// identify tests if the input is matched by any of the TV regexp.
 func (p *TVPreProcessor) identify(m types.Item) bool {
 	for _, matcher := range p.matchers {
 		if matcher.MatchString(m.SourcePath) {

@@ -25,10 +25,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// WordMatcher regex
+// WordMatcher regex.
 var matcher *regexp.Regexp = regexp.MustCompile(`[^'\w]`)
 
-// TVDbClient adds metadata from the TVDb
+// TVDbClient adds metadata from the TVDb.
 type TVDbClient struct {
 	APIKey       string `mapstructure:"api-key"`
 	RequestLimit int64  `mapstructure:"request-limit"`

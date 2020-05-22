@@ -11,10 +11,10 @@ import (
 	"github.com/rbtr/pachinko/types/metadata"
 )
 
-// Movie movie
+// Movie defines the Movie Metadata enum type.
 const Movie metadata.MediaType = "movie"
 
-// Metadata metadata
+// Metadata contains movie metadata.
 type Metadata struct {
 	Title       string
 	ReleaseYear int

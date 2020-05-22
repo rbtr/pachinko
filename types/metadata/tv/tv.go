@@ -13,16 +13,16 @@ import (
 	"github.com/rbtr/pachinko/types/metadata"
 )
 
-// TV tv
+// TV defines the TV type enum.
 const TV metadata.MediaType = "tv"
 
-// Season season
+// Season contains the TV Season metadata.
 type Season struct {
 	Title  string
 	Number int
 }
 
-// Episode episode
+// Episode contains the TV Episode metadata.
 type Episode struct {
 	Title          string
 	Number         int
@@ -31,7 +31,7 @@ type Episode struct {
 	AirDate        time.Time
 }
 
-// Metadata metadata
+// Metadata contains TV metadata.
 type Metadata struct {
 	Name        string
 	ReleaseYear int

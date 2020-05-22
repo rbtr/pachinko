@@ -20,12 +20,12 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// Config is common/general output tunables
+// Config is common/general output tunables.
 type Config struct {
 	DryRun bool
 }
 
-// Output is plugin interface to handle the result
+// Output is plugin interface to handle the result.
 type Output interface {
 	Receive(<-chan types.Item)
 	Init(context.Context, Config) error
